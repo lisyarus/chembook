@@ -1,0 +1,137 @@
+\documentclass{book}
+
+% for dots in table of contents
+\usepackage{tocloft}
+\renewcommand{\cftchapdotsep}{\cftdotsep}
+
+% for clickable table of contents
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks = true,
+	linkcolor = blue,
+	citecolor = magenta,
+}
+
+% for appendices in table of contents
+\usepackage[titletoc]{appendix}
+
+% for references section in table of contents
+\usepackage[nottoc]{tocbibind}
+
+% for proper name of references section
+\renewcommand{\bibname}{References}
+
+\usepackage[a4paper,margin=1in]{geometry}
+
+\newcommand{\molecule}[1]{\textrm{#1}}
+
+% for nice monospaced font using \texttt
+\usepackage{courier}
+
+\usepackage{enumitem}
+
+\usepackage{titlesec}
+
+\titlespacing{\section}{0pt}{\parskip}{-\parskip}
+
+\setlist{nosep}
+\setlength{\parskip}{1em}
+
+\title{Quantum Chemistry In A Few Weekends}
+\author{Nikita Lisitsa \\ \texttt{lisyarus@gmail.com}}
+\date{circa January 2020}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\chapter{Introduction} \label{chap:intro}
+
+\section{What it is all about}
+It was already a month of me trying to come up with a perfect introduction for this book when I decided I better do something more practical. Let's get straight to the point: what is this book about? Or, rather, what is it \textit{not} about? This is \textit{not} a
+
+\begin{itemize}
+\item Chemistry textbook
+\item Quantum mechanics textbook
+\item Linear algebra textbook
+\item Python tutorial
+\end{itemize}
+
+But what it \textit{is}, then? Well, a sturdy mix of all the above, aimed at getting physically significant results as soon as possible. We are going to write some Python code using \href{https://numpy.org}{\texttt{numpy}} and \href{https://www.scipy.org}{\texttt{scipy}} libraries (and ocasionally \href{https://matplotlib.org}{\texttt{matplotlib}}, if you want some fancy plots \& images) and obtain energies and orbital densities for some pretty tiny chemical systems (that is, systems composed of nuclei \& electrons).
+
+The reader is expected to have \textit{at least} a bit of knowledge on physics/chemistry, basic mathematics and Python programming language. For getting into the physics and maths involved, I recommend either reading the first few chapters of \cite{ref:atkins} or not skipping the \nameref{chap:intro} chapter. For learning Python, I recommend googling some tutorials/courses/etc, for there are way too many of them to recommend anything in particular.
+
+The following sections of the \nameref{chap:intro}  chapter briefly discuss some essential theoretical background. I'd especially recommend reading the \nameref{sec:var} section so that you understand what all those matrices even mean and what those solvers are actually solving. The actual coding starts at the \nameref{chap:one} chapter.
+
+Beware that I am by no means a scientist, a quantum chemist or even a physicist. I am barely an amateur possessing some unconventional hobbies. The methods that we are going to make use of are \textbf{not} the methods used by real quantum chemical software and are applicable to tiny systems only (with, say, 4 or 5 electrons, while systems of practical interest can contain \textit{thousands} of them).
+
+The name of this book was inspired by Peter Shirley's \href{https://raytracing.github.io}{Ray Tracing in One Weekend series}, which is an amazing source for learning about modern photorealistic rendering.
+
+Finally, feel free to \href{mailto:lisyarus@gmail.com}{email me} if you have some questions, I would love to be of help.
+
+\section{A tale of energies}
+\section{A classical failure}
+\section{Variational method} \label{sec:var}
+\section{Practical considerations}
+
+\chapter{One-electron systems} \label{chap:one}
+\section{Hydrogen atom \(\molecule{H}\)}
+\section{Helium cation \(\molecule{He}^+\)} 
+\section{Lithium 2+ cation \(\molecule{Li}^{2+}\)}
+\section{Dihydrogen cation \(\molecule{H}_2^+\)}
+\section{Trihydrogen 2+ cation \(\molecule{H}_3^{2+}\)}
+
+\chapter{Two-electron systems} \label{chap:two}
+\section{Helium atom \(\molecule{He}\)}
+\section{Hydrogen anyon \(\molecule{H}^-\)}
+\section{Hydrogen molecule \(\molecule{H}_2\)}
+\section{Trihydrogen cation \(\molecule{H}_3^+\)}
+\section{Helium hydride cation \(\molecule{HeH}^+\)}
+% Astrophysical detection of the helium hydride ion HeH+, April 2019
+\section{Lithium cation \(\molecule{Li}^+\)}
+
+\chapter{Three-electron systems} \label{chap:three}
+\section{Lithium atom \(\molecule{Li}\)}
+\section{Triatomic hydrogen \(\molecule{H}_3\)}
+\section{Helium hydride \(\molecule{HeH}\)}
+
+\chapter{What next?} \label{chap:next}
+
+\begin{thebibliography}{9}
+\bibitem{ref:atkins}
+	Peter Atkins, Ronald Friedman,
+	\textit{Molecular Quantum Mechanics}
+\bibitem{ref:lieb}
+	Elliot Lieb,
+	\textit{The Stability of Matter: From Atoms to Stars}
+\bibitem{ref:hall}
+	Brian Hall,
+	\textit{Quantum Theory for Mathematicians}
+\bibitem{ref:kato-th}
+	Tosio Kato,
+	\textit{On the eigenfunctions of many-particle systems in quantum mechanics}
+\bibitem{ref:kato-ham}
+	Tosio Kato,
+	\textit{Fundamental properties of Hamiltonian operators of Schrödinger type}
+\bibitem{ref:fulton-harris}
+	William Fulton, Joe Harris,
+	\textit{Representation Theory: A First Course}
+\bibitem{ref:edmonds}
+	A. R. Edmonds,
+	\textit{Angular Momentum in Quantum Mechanics}
+\bibitem{ref:tmpchem}
+	TMP Chem,
+	\url{www.youtube.com/channel/UC3dZQdfv67X49cZkoXWYSwQ}
+\bibitem{ref:psi4numpy}
+	Psi4NumPy,
+	\url{www.github.com/psi4/psi4numpy}
+\end{thebibliography}
+
+\begin{appendices}
+\chapter{Hermite polynomials} \label{apx:hermite}
+\chapter{Derivation of GTO integrals} \label{apx:integrals}
+\end{appendices}
+
+\end{document}
