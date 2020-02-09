@@ -54,17 +54,18 @@ It was already a month of me trying to come up with a perfect introduction for t
 \item Python tutorial
 \end{itemize}
 
-But what it \textit{is}, then? Well, a sturdy mix of all the above, aimed at getting physically significant results as soon as possible. We are going to write some Python code using \href{https://numpy.org}{\texttt{numpy}} and \href{https://www.scipy.org}{\texttt{scipy}} libraries (and ocasionally \href{https://matplotlib.org}{\texttt{matplotlib}}, if you want some fancy plots \& images) and obtain energies and orbital densities for some pretty tiny chemical systems (that is, systems composed of nuclei \& electrons).
+But what it \textit{is}, then? Well, a sturdy mix of all the above, aimed at getting physically significant results as soon as possible, yet without sacrificing understanding. We are going to write some Python code using \href{https://numpy.org}{\texttt{numpy}} and \href{https://www.scipy.org}{\texttt{scipy}} libraries (and ocasionally \href{https://matplotlib.org}{\texttt{matplotlib}}, if you want some fancy plots \& images) and obtain energies and orbital densities for some pretty tiny chemical systems (that is, systems composed of nuclei \& electrons).
 
-The reader is expected to have \textit{at least} a bit of knowledge on physics/chemistry, basic mathematics and Python programming language. For getting into the physics and maths involved, I recommend either reading the first few chapters of \cite{ref:atkins} or not skipping the \nameref{chap:intro} chapter. For learning Python, I recommend googling some tutorials/courses/etc, for there are way too many of them to recommend anything in particular.
+The reader is expected to have \textit{at least} a bit of knowledge on physics/chemistry, basic mathematics and Python programming language. For getting into the physics and maths involved, I recommend either reading the first few chapters of \cite{ref:atkins} or at least not skipping the \nameref{chap:var} section. For learning Python, I recommend googling some tutorials/courses/etc, for there are way too many of them to recommend anything in particular.
 
-The following sections of the \nameref{chap:intro}  chapter briefly discuss some essential theoretical background. I'd especially recommend reading the \nameref{sec:var} section so that you understand what all those matrices even mean and what those solvers are actually solving. The actual coding starts at the \nameref{chap:one} chapter.
+The following few sections briefly discuss some essential theoretical background, starting with basic mechanics. I'd especially recommend reading the \nameref{chap:var} section so that you understand what all those matrices even mean and what those solvers are actually solving. The actual coding starts at the \nameref{chap:harmonic} section.
 
-Beware that I am by no means a scientist, a quantum chemist or even a physicist. I am barely an amateur possessing some unconventional hobbies. The methods that we are going to make use of are \textbf{not} the methods used by real quantum chemical software and are applicable to tiny systems only (with, say, 4 or 5 electrons, while systems of practical interest can contain \textit{thousands} of them).
-
-The name of this book was inspired by Peter Shirley's \href{https://raytracing.github.io}{Ray Tracing in One Weekend series}, which is an amazing source for learning about modern photorealistic rendering.
+Beware that I am by no means a scientist, a quantum chemist or even a physicist. I am barely an amateur possessing some unconventional hobbies. The methods that we are going to make use of are \textbf{not} the methods used by real quantum chemical software and, as far as I understand, are only applicable to very tiny systems (with, say, 4 or 5 electrons, while systems of practical interest can contain \textit{thousands} of them). This book only covers one-electron systems.
 
 Finally, feel free to \href{mailto:lisyarus@gmail.com}{email me} if you have some questions, I would love to be of help.
+
+\bigbreak
+\textit{The name of this book was inspired by Peter Shirley's \href{https://raytracing.github.io}{Ray Tracing in One Weekend} series, which is an amazing source for learning about modern photorealistic rendering.}
 
 \section{A tale of energies}
 \section{A classical failure}
