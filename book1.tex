@@ -101,6 +101,31 @@ Gladly, being difficult is very far from being impossible, and we are going to e
 
 \textit{N.B. The theory of relativity plays an important role as well, though in chemistry it is mostly responsible for much finer effects. It also limits the applicability of non-relativistic quantum mechanics to atoms with atomic number being 137 and higher (as of today, only 118 have been identified as existing), and I've written a \href{https://twitter.com/lisyarus/status/1189227697605660673?s=20}{twitter thread} on the details of this.}
 
+\section{Quantum mechanics: quick and dirty} \label{sec:qm}
+
+\textit{From now on, we'll start being more technical.}
+
+The reader will learn from any inroductory material on quantum mechanics (e.g. \cite{ref:atkins}) that in Schrödinger representation everything boils down to the \textit{time-independent Schrödinger equation}:
+
+\begin{equation} \label{eq:shrod} \hat H \psi = E \psi \end{equation}
+
+Physicists and chemists use the \(\widehat{hat}\) to distinguish operators \(\hat H\) from numbers \(E\). This number \(E\) is the energy of the system. It isn't always well-defined (there may be some probabilities involved), but we are interested in cases when it is. \(\psi\) is the \textit{wavefunction}, which encodes everything about the state of our physical system. Technically, it is a vector from some Hilbert space, but in many real situations this Hilbert space consists of functions, so \(\psi\) is just a function, like \(\psi(x) = \sin(3x)\). The unknowns of this equation are usually both \(\psi\) and \(E\).
+
+In quantum mechanics, every measurable physical property is encoded as a linear operator. Energy is no exception: \(\hat H\) is the energy operator, also called \textit{the Hamiltonian} (in honour of William Rowan Hamilton, who has nothing to do with quantum mechanics\footnote{He did however make significant contribution to \textit{classical} mechanics, presenting the so-called \textit{Hamiltonian formalism}, where the Hamiltonian is the energy function that corresponds directly to operator \(\hat H\).}, in accordance with the Arnold Principle). The energy operator is arguably the most important one: after all, it governs the evolution of the system. All we need to know to start reasoning about a system is the energy operator (and the Hilbert space it operates on, though purists claim this piece of data is built into the operator itself, and I tend to agree). In our cases, this operator applies to functions, usually by multiplying them by other functions, or differentiating them, or both, e.g. \(\hat H \psi = -\frac{1}{2} \frac{d^2}{dx^2}\psi\). Out or pure curiosity, let us apply this operator to the \(\psi\) from previous paragraph:
+
+\begin{equation} \hat H \psi = -\frac{1}{2} \frac{d^2}{dx^2} \sin(3x) = \frac{9}{2} \sin(3x) \end{equation}
+
+because \(\frac{d^2}{dx^2} \sin(kx) = -k^2 \sin(kx)\). We can see that for such \(\hat H\), \(\psi\) is a solution of \eqref{eq:shrod}. Such sine-like wavefunctions are called \textit{plane waves}, while the physical system described by the operator \(\hat H\) is called a \textit{free one-dimensional particle}. In this cases, we call \(\psi\) the \textit{eigenfunction} or \textit{eigenvector} of the operator \(\hat H\), and \(E\) is the corresponding \textit{eigenvalue}.
+
+Let us repeat:
+\begin{itemize}
+\item A system (say, a water molecule) is described by an operator \(\hat H\)
+\item A specific state of a system (a water molecule at that point, flying in that direction with that speed) is described by a wavefunction \(\psi\) (we'll ocasionally use other letters for it, but always greek ones)
+\item We seek for solutions of the equation \(\hat H \psi = E \psi\), where \(\hat H\) is known, while both \(E\) and \(\psi\) are unknowns. 
+\end{itemize}
+
+It so happens in physical systems that the possible values of \(E\) are bounded below (see \href{https://www.themathcitadel.com/energy-levels-of-molecules-are-bounded-below/}{here} for a proof in case of chemical systems). If the minimal possible value of \(E\) is attained by some wavefunction \(\psi\), we call it the \textit{ground state}. It is the state of most importance, since in general it is the most likely state a random system will be found in (the lower the temperature, the more the probability of ground state, see \href{https://en.wikipedia.org/wiki/Boltzmann_distribution}{Gibbs distribution}).
+
 \section{Variational method} \label{sec:var}
 \section{Practical considerations}
 \section{Harmonic oscillator} \label{sec:harmonic}
