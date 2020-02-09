@@ -1,8 +1,8 @@
-\documentclass{book}
+\documentclass{article}
 
 % for dots in table of contents
 \usepackage{tocloft}
-\renewcommand{\cftchapdotsep}{\cftdotsep}
+\renewcommand{\cftsecdotsep}{\cftdotsep}
 
 % for clickable table of contents
 \usepackage{hyperref}
@@ -18,9 +18,6 @@
 % for references section in table of contents
 \usepackage[nottoc]{tocbibind}
 
-% for proper name of references section
-\renewcommand{\bibname}{References}
-
 \usepackage[a4paper,margin=1in]{geometry}
 
 \newcommand{\molecule}[1]{\textrm{#1}}
@@ -32,10 +29,7 @@
 
 \usepackage{titlesec}
 
-\titlespacing{\section}{0pt}{\parskip}{\parskip}
-
-\setlist{nosep}
-\setlength{\parskip}{1em}
+\setlength{\parskip}{0.4em}
 
 \title{Quantum Chemistry In One Weekend}
 \author{Nikita Lisitsa \\ \texttt{lisyarus@gmail.com}}
@@ -44,12 +38,13 @@
 \begin{document}
 
 \maketitle
+\newpage
 
 \tableofcontents
-
-\chapter{Introduction} \label{chap:intro}
+\newpage
 
 \section{What it is all about}
+
 It was already a month of me trying to come up with a perfect introduction for this book when I decided I better do something more practical. Let's get straight to the point: what is this book about? Or, rather, what is it \textit{not} about? This is \textit{not} a
 
 \begin{itemize}
@@ -113,8 +108,8 @@ Finally, feel free to \href{mailto:lisyarus@gmail.com}{email me} if you have som
 \end{thebibliography}
 
 \begin{appendices}
-\chapter{Hermite polynomials} \label{apx:hermite}
-\chapter{Derivation of GTO integrals} \label{apx:integrals}
+\section{Hermite polynomials} \label{apx:hermite}
+\section{Derivation of GTO integrals} \label{apx:integrals}
 \end{appendices}
 
 \end{document}
