@@ -68,10 +68,23 @@ Finally, feel free to \href{mailto:lisyarus@gmail.com}{email me} if you have som
 \textit{The name of this book was inspired by Peter Shirley's \href{https://raytracing.github.io}{Ray Tracing in One Weekend} series, which is an amazing source for learning about modern photorealistic rendering.}
 
 \section{A tale of energies}
+
+So, what we are going to do is compute the lowest-energy states of atoms \& ions. Why is energy so important?
+
+In any decent physical framework (e.g. classical or quantum mechanics) total energy of a closed system is conserved. It consists of several parts (e.g. kinetic + potential) which don't necessarily remain constant, but conservation of total energy implies that decrease in one part leads to increase in another. Consider a perfectly reasonable situation of a rock falling from sky: the higher it is, the higher is the potential energy; as the rock falls down, the potential energy decreases, leading to increase in kinetic energy, i.e. acceleration (some people call this \textit{gravity}).
+
+We know that even if the rock was thrown in up the air, it will eventually fall down anyway. This is how all mechanical systems behave: they accelerate towards areas of less potential energy (this is Newton's second law). This doesn't generally mean that the system eventually falls into a local minimum of potential energy. Remember that as potential energy decreases, the kinetic energy increases, so upon reaching a local minimum the system would run with insane speeds and miss the minimum completely. This doesn't happen to rocks, though, since energy is converted into stresses in the ground when rock finally reachs it, but this does happen to pendulums: the potential energy minimum is when the pendulum is at its lowest point, yet the pendulum flies through it at high speed.
+
+A system can, however, reach a local minimum of potential energy if it has some energy sink that can absorb excess kinetic energy. Typically, this sink is just the environment: a particle constantly hitting another particles quickly loses excess kinetic energy and reachs so-called thermal equilibrium. Recall that temperature is simply average kinetic energy; thus, the lower the surrounding temperature, the higher are the chances the the system will be found in a local minimum of potential energy. And \textit{this} effect is the major reason why we seek for lowest-energy states: most molecules in real life are in those states supplemented with small kinetic fluctuations (real molecules aren't static, they wiggle and bend randomly).
+
+Interactions can likewise be described in terms of energy: attractive force between particles means that the closer they are, the lower the energy, and repulsive force means the opposite. A \textit{bond} happens when the interaction between two systems (say, particles) has a local minimum of potential energy at some specific distance between the systems. The energy of the bond is the difference between the energy of two systems combined when the bonding takes place and the energy when they are so far that no interaction is present at all. Thus, creating a bond releases energy, while breaking it requires energy. This, coupled with some termodynamics, leads to equations that allow us to predict temperature changes in chemical reactions, provided we know the energies of the bonds. By the way, a chemical reaction is a process of forming and breaking chemical bonds. Bonds are called chemical is they happen between atomic nuclei and electrons, and usually involve at least three participants (two nuclei and an electron holding those together). As an extreme example, a piece of metal can be considered to be a single bond between all particles involved (this is so-called \textit{metallic bonding}).
+
+I think I have convinced the reader that energies are of great utility and importance. They allow us to predict which reactions can happen and which cannot, and at what temperature. They can let us visualize how molecules look like, i.e. what is the geometry of the molecules. What is especially nice is that chemists can actually observe the energies directly, --- or, rather, the differences between them, --- simply by looking at the molecules at some special conditions: this is called \textit{spectroscopy}. Well, okay, the word ``simply'' was slightly unfair, but the point is that there are methods that can verify energy calculations with great precision.
+
 \section{A classical failure}
 \section{Variational method} \label{sec:var}
 \section{Practical considerations}
-\section{Harmonic oscillator}
+\section{Harmonic oscillator} \label{chap:harmonic}
 \section{Hydrogen atom \(\molecule{H}\)}
 \section{Helium cation \(\molecule{He}^+\)} 
 \section{Lithium 2+ cation \(\molecule{Li}^{2+}\)}
