@@ -82,6 +82,23 @@ Interactions can likewise be described in terms of energy: attractive force betw
 I think I have convinced the reader that energies are of great utility and importance. They allow us to predict which reactions can happen and which cannot, and at what temperature. They can let us visualize how molecules look like, i.e. what is the geometry of the molecules. What is especially nice is that chemists can actually observe the energies directly, --- or, rather, the differences between them, --- simply by looking at the molecules at some special conditions: this is called \textit{spectroscopy}. Well, okay, the word ``simply'' was slightly unfair, but the point is that there are methods that can verify energy calculations with great precision.
 
 \section{A classical failure}
+
+One of the first things I tried to implement when I felt sufficiently self-confident about my skills in 3D graphics and simulations was an \(\molecule{H}_2\) molecule. It failed miserably: most configurations were disastrous, with a few exceptions at unstable equilibria. There was no bonding, no stability, no \textit{molecule} being formed.
+
+It turns out I've rediscovered one of the many problems of XIX-century physics: it fails to explain how atoms \& molecules work. There are many reasons for that, the most well-known are
+
+\begin{itemize}
+\item \href{https://en.wikipedia.org/wiki/Earnshaw's_theorem}{Earnshaw's theorem}: a system of charged particles cannot reach stable equilibrium by means of electrostatic forces alone, --- this is exactly what I've faced when trying to simulate those
+\item Electromagnetic radiation: an electron orbiting a nucleus would lose energy by \href{https://en.wikipedia.org/wiki/Larmor_formula}{emitting electromagnetic waves}, thus eventually falling on the nucleus
+\item Discrete emission spectrum: it was observed via spectrometry that the possible energy levels of hydrogen are \href{https://en.wikipedia.org/wiki/Hydrogen_spectral_series}{discrete}, although classical mechanics always predicts a continuum of possible energy levels
+\end{itemize}
+
+Quantum mechanics came to the rescue. The advantage of the new theory is that is correctly describes \textit{a ridiculous number of previously unexplained phenomena}, the disadvantage being that the mathematics involed is rather hard. In classical mechanics, to predict the motion of a particle, you would solve an \textit{ordinary differential equation} --- pick up your favourite method (4th-order Runge-Kutta seemingly being the most popular one) and you are done. In quantum mechanics, you have to solve a \textit{hyperbolic partial differential equation}, --- which are notoriously hard to solve numerically, --- not to mention that we don't have the notions of exact particle's posisition or momentum anymore.
+
+Gladly, being difficult is very far from being impossible, and we are going to employ this nice observation.
+
+\textit{N.B. The theory of relativity plays an important role as well, though in chemistry it is mostly responsible for much finer effects. It also limits the applicability of non-relativistic quantum mechanics to atoms with atomic number being 137 and higher (as of today, only 118 have been identified as existing), and I've written a \href{https://twitter.com/lisyarus/status/1189227697605660673?s=20}{twitter thread} on the details of this.}
+
 \section{Variational method} \label{sec:var}
 \section{Practical considerations}
 \section{Harmonic oscillator} \label{chap:harmonic}
