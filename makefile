@@ -1,10 +1,10 @@
-.ONESHELL: book.pdf
-book.pdf: book.tex clean
+.ONESHELL: book1.pdf
+book1.pdf: book1.tex clean
 	cd build
-	pdflatex ../book.tex
-	pdflatex ../book.tex
-	mv book.pdf ..
+	pdflatex ../book1.tex
+	pdflatex ../book1.tex
+	mv book1.pdf ..
 	
 .PHONY: clean
 clean:
-	rm -f book.pdf build/*
+	rm -f book1.pdf build/*
