@@ -40,9 +40,11 @@
 \begin{document}
 
 \maketitle
+
 \newpage
 
 \tableofcontents
+
 \newpage
 
 \section{What it is all about}
@@ -69,6 +71,8 @@ Finally, feel free to \href{mailto:lisyarus@gmail.com}{email me} if you have som
 \bigbreak
 \textit{The name of this book was inspired by Peter Shirley's \href{https://raytracing.github.io}{Ray Tracing in One Weekend} series, which is an amazing source for learning about modern photorealistic rendering.}
 
+\newpage
+
 \section{A tale of energies}
 
 So, what we are going to do is compute the lowest-energy states of atoms \& ions. Why is energy so important?
@@ -82,6 +86,8 @@ A system can, however, reach a local minimum of potential energy if it has some 
 Interactions can likewise be described in terms of energy: attractive force between particles means that the closer they are, the lower the energy, and repulsive force means the opposite. A \textit{bond} happens when the interaction between two systems (say, particles) has a local minimum of potential energy at some specific distance between the systems. The energy of the bond is the difference between the energy of two systems combined when the bonding takes place and the energy when they are so far that no interaction is present at all. Thus, creating a bond releases energy, while breaking it requires energy. This, coupled with some termodynamics, leads to equations that allow us to predict temperature changes in chemical reactions, provided we know the energies of the bonds. By the way, a chemical reaction is a process of forming and breaking chemical bonds. Bonds are called chemical is they happen between atomic nuclei and electrons, and usually involve at least three participants (two nuclei and an electron holding those together). As an extreme example, a piece of metal can be considered to be a single bond between all particles involved (this is so-called \textit{metallic bonding}).
 
 I think I have convinced the reader that energies are of great utility and importance. They allow us to predict which reactions can happen and which cannot, and at what temperature. They can let us visualize how molecules look like, i.e. what is the geometry of the molecules. What is especially nice is that chemists can actually observe the energies directly, --- or, rather, the differences between them, --- simply by looking at the molecules at some special conditions: this is called \textit{spectroscopy}. Well, okay, the word ``simply'' was slightly unfair, but the point is that there are methods that can verify energy calculations with great precision.
+
+\newpage
 
 \section{A classical failure}
 
@@ -100,6 +106,8 @@ Quantum mechanics came to the rescue. The advantage of the new theory is that is
 Gladly, being difficult is very far from being impossible, and we are going to employ this nice observation.
 
 \textit{N.B. The theory of relativity plays an important role as well, though in chemistry it is mostly responsible for much finer effects. It also limits the applicability of non-relativistic quantum mechanics to atoms with atomic number being 137 and higher (as of today, only 118 have been identified as existing), and I've written a \href{https://twitter.com/lisyarus/status/1189227697605660673?s=20}{twitter thread} on the details of this.}
+
+\newpage
 
 \section{Quantum mechanics: quick and dirty} \label{sec:qm}
 
@@ -127,6 +135,8 @@ Let us repeat:
 It so happens in physical systems that the possible values of \(E\) are bounded below (see \href{https://www.themathcitadel.com/energy-levels-of-molecules-are-bounded-below/}{here} for a proof in case of chemical systems). If the minimal possible value of \(E\) is attained by some wavefunction \(\psi\), we call it the \textit{ground state}. It is the state of most importance, since in general it is the most likely state a random system will be found in (the lower the temperature, the more the probability of ground state, see \href{https://en.wikipedia.org/wiki/Boltzmann_distribution}{Gibbs distribution}).
 
 \textit{N.B. There are severe technical difficulties in actual mathematical formalism of quantum mechanics. They can be overcome, but the mathematics involved is far beyond the scope of this book. You can find a reasonably graceful introduction to the matter in \cite{ref:hall}.}
+
+\newpage
 
 \section{Variational method} \label{sec:var}
 \section{Practical considerations}
