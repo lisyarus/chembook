@@ -139,6 +139,35 @@ There are, in general, many solutions to this equation. It so happens in physica
 \newpage
 
 \section{Variational method} \label{sec:var}
+
+Let's recap what we've got so far: we have some \(\hat H\), and we seek for \(\psi\) that has the minimal possible value of \(E\). How can we achieve this? It is the time to lose our very last hope and accept the inevitable: there is no good way. If the Hilbert space we are working with was finite-dimensional, this would be an ordinary problem of numerical linear algebra. Our Hilbert space is the space of some functions or combinations thereor, and it is \textit{infinite-dimensional}. Oops.
+
+The trick is to reformulate our problem. First of all, however, we should talk about Hilbert spaces a bit more. They are not just vector spaces, they come with a special operation called the \textit{inner product}. If you are familiar with the dot product of vectors in geometry, this is essentially the same. Take any two functions --- say, \(\psi\) and \(\phi\), --- and you can get their inner product, denoted by \(\langle \psi, \phi \rangle\) or, using Dirac notation, \(\langle \psi | \phi \rangle\)\footnote{This book is not using Dirac notation.}. This is just a number that can be used to measure lengths, angles, and so on, --- even in infinite-dimensional spaces. The definition that we are going to use (which is a pretty standard one) is the \textit{\(L^2\) inner product}, which is the integral of one function times the complex conjugate\footnote{If you are afraid of complex numbers, do not let fear stop you: we won't need complex numbers in this book.} of the other, i.e.
+
+\begin{equation} \label{eq:l2prod} \langle \psi, \phi \rangle = \int \psi(x) \overline{\phi(x)} dx \end{equation}
+
+It so happens\textsuperscript{\cite{ref:atkins}} that solutions to \(\hat H \psi = E \psi\) are exactly the stationary points of the functional\footnote{A functional is a function that applies to functions and outputs a number.}
+
+\begin{equation} \label{eq:rayleigh} R(\psi) = \frac{\langle \psi, \hat H \psi \rangle}{\langle \psi, \psi \rangle} \end{equation}
+
+called the \href{https://en.wikipedia.org/wiki/Rayleigh_quotient}{Rayleigh quotient}. In particular, the value of this functional on \textit{any} wavefunction \(\psi\) is \textit{not less} than the minimal possible value of \(E\). Thus, we have our first simplest method to solve the equation: pick any random \(\psi\) that you like, plug it into \(R\), and the value you get is an upper bound to the true ground state energy. Hurray!
+
+Of course, this is still too simple to be useful, yet it provides a good foundation. Instead of picking one \(\psi\), we could parametrize it with some parameter \(c\) so that the value of \(R\) depends on \(c\) as well and we can find the minimum of \(R\) with respect to \(c\) using techniques from undergraduate analysis!\textsuperscript{\cite{ref:atkins}} We could even take multiple \(c\)'s and minimize a function of many arguments. This is what is called the \textit{variational method} --- it works by \textit{varying} the wavefunction with respect to parameters and finding the minimum of \(R\), and can be used to get some valuable analytical estimates for various systems\textsuperscript{\cite{ref:atkins}}.
+
+It is not that simple to minimize a function of many parameters, though, unless it depends on the parameters in some primitive way. Say, pick some functions \(\phi_1, \phi_2, \dots, \phi_k\) and let \(\psi(x) = c_1 \phi_1(x) + \dots + c_k \phi_k(x) \). This is the idea of \textit{linear variational method}, where the dependence of \(\psi\) on the parameters is, well, linear. After taking a few derivatives and doing a bit of algebra one arrives\textsuperscript{\cite{ref:atkins}} at this matrix equation:
+
+\begin{equation} \label{eq:var} H c = E S c \end{equation}
+
+where
+
+\begin{itemize}
+\item \(H\) is an \(k\times k\)-matrix with entries \(H_{ij} = \langle \phi_i, \hat H \phi_j \rangle\)
+\item \(S\) is an \(k\times k\)-matrix (called the \textit{overlap matrix}\footnote{In mathematics, this one is better known as \href{https://en.wikipedia.org/wiki/Gramian_matrix}{Gramian matrix}.}) with entries \(S_{ij} = \langle \phi_i, \phi_j \rangle\)
+\item \(c\) is the column vector of parameters \(c_1, \dots, c_k\)
+\end{itemize}
+
+This is known as a \textit{generalized eigenvalue problem} (as opposed to the regular eigenvalue problem with \(S\) being the identity matrix), and it is this equation that we will try to solve.
+
 \section{Practical considerations}
 \section{Harmonic oscillator} \label{sec:harmonic}
 \section{Hydrogen atom \(\molecule{H}\)}
