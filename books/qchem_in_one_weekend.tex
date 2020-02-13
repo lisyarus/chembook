@@ -30,6 +30,7 @@
 \usepackage{titlesec}
 
 \usepackage{amsmath}
+\usepackage{amsfonts}
 
 \setlength{\parskip}{0.4em}
 
@@ -168,8 +169,25 @@ where
 
 This is known as a \textit{generalized eigenvalue problem} (as opposed to the regular eigenvalue problem with \(S\) being the identity matrix), and it is this equation that we will try to solve.
 
-\section{Practical considerations}
 \section{Harmonic oscillator} \label{sec:harmonic}
+
+Before we get into chemiscal systems, atomic nuclei and electrons, let's first try our hand at a simpler toy quantum system --- the one-dimensional \href{https://en.wikipedia.org/wiki/Quantum_harmonic_oscillator}{\textit{harmonic oscillator}}. It works roughly like a pendulum, being forced back the more it moves off the center. The Hilbert space for this system is denoted \(L^2(\mathbb R)\) --- the space of functions of one real argument that have a finite integral of their modulus squared (otherwise, \(\langle \psi, \psi \rangle\) wouldn't exist). We should be working with complex-valued functions, but as I'll explain in the next section, we can actually restrict ourselves to real numbers everywere.
+
+The Hamiltonian for this system looks like this:
+
+\begin{equation} \label{eq:harmonic-hamiltonian} \hat H \psi = -\frac{1}{2} \frac{d^2}{dx^2} \psi + \frac{x^2}{2} \psi \end{equation}
+
+And the energy eigenvalues are
+
+\begin{equation} E_k = k + \frac{1}{2}, k = 0,1,2,\dots \end{equation}
+
+Thus, the ground state energy is \(E_0=\frac{1}{2}\). Let's try to get this number without solving the equation \eqref{eq:shrod} directly, employing the equation \eqref{eq:var} instead!
+
+All we need to do is pick a good selection of \textit{basis functions} \(\phi_k\), also called the \textit{basis set}. What makes a basis set better or worse? We have a dilemma here: on one hand, the basis should be somewhat resembling the actual ground state, so that we can get closer to real ground state energy; on the other hand, we'll have to compute a bunch of integrals \(\langle \phi_i, \phi_j\rangle\) and \(\langle \phi_i, \hat H \phi_j\rangle\), so the basis functions should be simple enough so that we can tackle this integrals.
+
+
+
+\section{Practical considerations} \label{sec:pract}
 \section{Hydrogen atom \(\molecule{H}\)}
 \section{Helium cation \(\molecule{He}^+\)} 
 \section{Lithium 2+ cation \(\molecule{Li}^{2+}\)}
