@@ -31,12 +31,16 @@
 
 \usepackage{amsmath}
 \usepackage{amsfonts}
+\usepackage{extarrows}
 
 \setlength{\parskip}{0.4em}
 
 \title{Quantum Chemistry In One Weekend}
 \author{Nikita Lisitsa \\ \texttt{lisyarus@gmail.com}}
 \date{circa February 2020}
+
+\newcommand{\equalby}[1]{\xlongequal{\text{by }\eqref{#1}}}
+\newcommand{\intR}{\int\limits_\mathbb R}
 
 \begin{document}
 
@@ -185,7 +189,103 @@ Thus, the ground state energy is \(E_0=\frac{1}{2}\). Let's try to get this numb
 
 All we need to do is pick a good selection of \textit{basis functions} \(\phi_k\), also called the \textit{basis set}. What makes a basis set better or worse? We have a dilemma here: on one hand, the basis should be somewhat resembling the actual ground state, so that we can get closer to real ground state energy; on the other hand, we'll have to compute a bunch of integrals \(\langle \phi_i, \phi_j\rangle\) and \(\langle \phi_i, \hat H \phi_j\rangle\), so the basis functions should be simple enough so that we can tackle this integrals.
 
+There are many options here, and I encourage you to try your own basis set if you are not afraid of computing a few integrals. The one I'll use will be
 
+\begin{equation} \phi_a(x) = e^{-(x-a)^2} \end{equation}
+
+This \textit{gaussian} functions are sufficiently localized and easy to integrate at the same time, which makes them a good choice. The parameter \(a\) can be any real number here.
+
+First of all, we need to compute those integrals. You may skip the derivations and go straight to the code, since we will only need the final formulas. The overlap integral is the simplest:
+
+\begin{equation} \label{eq:exp-overlap}
+\begin{gathered}
+\langle \phi_a, \phi_b \rangle = \int\limits_\mathbb{R} \phi_a(x) \phi_b(x) dx = \int\limits_\mathbb{R} e^{-(x-a)^2} e^{-(x-b)^2} dx = \int\limits_\mathbb{R} e^{-2x^2+2(a+b)x-\left(a^2+b^2\right)} dx =
+\\
+= \int\limits_\mathbb{R} e^{-2\left(x^2-2\frac{a+b}{2}x + \left(\frac{a+b}{2}\right)^2\right)} e^{\frac{(a+b)^2}{2} - \left(a^2+b^2\right)} dx = \int\limits_\mathbb{R} e^{-2\left(x-\frac{a+b}{2}\right)^2} e^{-\frac{(a-b)^2}{2}} dx = \sqrt{\frac{\pi}{2}} e^{-\frac{(a-b)^2}{2}}
+\end{gathered}
+\end{equation}
+
+We have used the following well-known \href{https://en.wikipedia.org/wiki/Gaussian_integral}{Gaussian integral}:
+
+\begin{equation} \label{eq:gauss}
+\intR e^{-p(x-a)^2} dx = \sqrt{\frac{\pi}{p}}
+\end{equation}
+
+The equality
+
+\begin{equation} \label{eq:gauss-product}
+e^{-(x-a)^2} e^{-(x-b)^2} = e^{-2\left(x-\frac{a+b}{2}\right)^2} e^{-\frac{(a-b)^2}{2}}
+\end{equation}
+
+is occasionally known as the \href{https://en.wikipedia.org/wiki/Gaussian_orbital#Rationale}{Gaussian product theorem} and is super useful for integrals with several gaussians.
+
+Next, we need a few handy observations:
+
+\begin{equation} \label{eq:dexp}
+\frac{d}{dx} e^{-p(x-a)^2} = -2p(x-a)e^{-p(x-a)^2}
+\end{equation}
+
+\begin{equation} \label{eq:int-dexp-is-zero}
+\intR (x-a)e^{-p(x-a)^2} \equalby{eq:dexp} -\frac{1}{2p} \intR \left[\frac{d}{dx} e^{-p(x-a)^2}\right] dx = \left. -\frac{1}{2p} e^{-p(x-a)^2}\right\vert_{-\infty}^{+\infty} = 0
+\end{equation}
+
+(by the fundamental theorem of calculus).
+
+\begin{equation} \label{eq:int-x-exp}
+\begin{gathered}
+\intR x e^{-p(x-a)^2} dx = \intR \left[ (x-a)+a\right] e^{-p(x-a)^2} dx = \intR (x-a)e^{-p(x-a)^2} dx + a \intR e^{-p(x-a)^2} dx = \\
+\equalby{eq:int-dexp-is-zero} 0 + a \intR e^{-p(x-a)^2} dx \equalby{eq:gauss} a \sqrt\frac{\pi}{p}
+\end{gathered}
+\end{equation}
+
+\begin{equation} \label{eq:ddexp}
+\frac{d^2}{dx^2} e^{-p(x-a)^2} \equalby{eq:dexp} \frac{d}{dx} \left[ -2p(x-a)e^{-p(x-a)^2} \right] = \left[-2p + 4p^2(x-a)^2\right] e^{-p(x-a)^2}
+\end{equation}
+
+\begin{equation} \label{eq:int-xx-exp}
+\begin{gathered}
+\intR (x-a)^2 e^{-p(x-a)^2} dx = \frac{1}{4p^2} \intR 4p^2 (x-a)^2 e^{-p(x-a)^2} dx = \\
+= \frac{1}{4p^2} \intR \left[ 4p^2 (x-a)^2 - 2p \right] e^{-p(x-a)^2} dx + \frac{1}{2p} \intR e^{-p(x-a)^2} dx \equalby{eq:ddexp} \\
+= \frac{1}{4p^2} \intR \left[\frac{d^2}{dx^2} e^{-p(x-a)^2}\right]dx + \frac{1}{2p} \sqrt\frac{\pi}{p} = \left. \frac{1}{4p^2} \left[\frac{d}{dx} e^{-p(x-a)^2}\right] \right\vert_{-\infty}^{+\infty} + \frac{1}{2p}\sqrt\frac{\pi}{p} = \\
+= 0 + \frac{1}{2p}\sqrt\frac{\pi}{p} = \sqrt\frac{\pi}{4p^3}
+\end{gathered}
+\end{equation}
+
+(again, using the fundamental theorem of calculus).
+
+Now we are ready for the energy integral \(\langle \phi_a, \hat H\phi_b\rangle\). We will split it into kinetic \(-\frac{1}{2}\frac{d^2}{dx^2}\) and potential \(\frac{1}{2}x^2\) parts (see the definition\eqref{eq:harmonic-hamiltonian} of \(\hat H\) for harmonic oscillator).
+
+\begin{equation} \label{eq:exp-potential}
+\begin{gathered}
+\left\langle \phi_a , \frac{1}{2} x^2 \phi_b \right\rangle = \intR e^{-(x-a)^2} \frac{1}{2} x^2 e^{-(x-b)^2} dx \equalby{eq:gauss-product} \frac{1}{2} e^{-\frac{(a-b)^2}{2}} \intR x^2 e^{-2\left(x-\frac{a+b}{2}\right)^2} dx = \\
+= \frac{1}{2} e^{-\frac{(a-b)^2}{2}} \intR \left[\left( x-\frac{a+b}{2} \right)^2 + x(a+b) - \frac{(a+b)^2}{4} \right] e^{-2\left(x-\frac{a+b}{2}\right)^2} dx \equalby{eq:int-xx-exp} \\
+= \frac{1}{2} e^{-\frac{(a-b)^2}{2}} \left[ \sqrt\frac{\pi}{32} + \intR \left[ x(a+b) - \frac{(a+b)^2}{4} \right] e^{-2\left(x-\frac{a+b}{2}\right)^2} dx \right] \equalby{eq:int-x-exp} \\
+= \frac{1}{2} e^{-\frac{(a-b)^2}{2}} \left[ \sqrt\frac{\pi}{32} + \frac{(a+b)^2}{2}\sqrt\frac{\pi}{2} - \frac{(a+b)^2}{4} \intR e^{-2\left(x-\frac{a+b}{2}\right)^2} dx \right] \equalby{eq:gauss} \\
+= \frac{1}{2} e^{-\frac{(a-b)^2}{2}} \left[ \sqrt\frac{\pi}{32} + \frac{(a+b)^2}{2}\sqrt\frac{\pi}{2} - \frac{(a+b)^2}{4} \sqrt\frac{\pi}{2} \right] = \\
+= \frac{1}{2} e^{-\frac{(a-b)^2}{2}} \sqrt\frac{\pi}{2} \left[ \frac{1}{4} + \frac{(a+b)^2}{4} \right] \equalby{eq:exp-overlap} \frac{1+(a+b)^2}{8} \langle \phi_a, \phi_b \rangle
+\end{gathered}
+\end{equation}
+
+Finally, the kinetic integral:
+
+\begin{equation} \label{eq:exp-kinetic}
+\begin{gathered}
+\left\langle \phi_a , -\frac{1}{2} \frac{d^2}{dx^2} \phi_b \right\rangle = -\intR e^{-(x-a)^2} \frac{1}{2} \left[ \frac{d^2}{dx^2} e^{-(x-b)^2} \right] dx \equalby{eq:ddexp} \\
+= -\intR \left[ 2(x-b)^2 -1 \right] e^{-(x-a)^2} e^{-(x-b)^2} dx = \\
+= -\intR \left[ 2x^2 - 4bx + 2b^2-1 \right] e^{-(x-a)^2} e^{-(x-b)^2} dx = \\
+= - 4 \intR e^{-(x-a)^2} \frac{1}{2} x^2 e^{-(x-b)^2} dx + 4b \intR x e^{-(x-a)^2} e^{-(x-b)^2} dx - (2b^2-1) \intR e^{-(x-a)^2} e^{-(x-b)^2} dx = \\
+= - 4 \left\langle \phi_a, \frac{1}{2} x^2 \phi_b \right\rangle + 4b \intR x e^{-(x-a)^2} e^{-(x-b)^2} dx - (2b^2-1) \langle \phi_a, \phi_b \rangle \equalby{eq:exp-potential} \\
+= - \frac{1+(a+b)^2}{2} \langle \phi_a, \phi_b \rangle + 4b \intR x e^{-(x-a)^2} e^{-(x-b)^2} dx - (2b^2-1) \langle \phi_a, \phi_b \rangle = \\
+= - \left[\frac{1+(a+b)^2}{2} + 2b^2 - 1\right] \langle \phi_a, \phi_b \rangle + 4b \intR x e^{-(x-a)^2} e^{-(x-b)^2} dx \equalby{eq:gauss-product} \\
+= - \left[\frac{1+(a+b)^2}{2} + 2b^2 - 1\right] \langle \phi_a, \phi_b \rangle + 4b e^{-\frac{(a-b)^2}{2}} \intR x e^{-2\left(x-\frac{a+b}{2}\right)^2} dx \equalby{eq:int-x-exp} \\
+= - \left[\frac{1+(a+b)^2}{2} + 2b^2 - 1\right] \langle \phi_a, \phi_b \rangle + 4b e^{-\frac{(a-b)^2}{2}} \frac{a+b}{2} \sqrt\frac{\pi}{2} \equalby{eq:exp-overlap} \\
+= - \left[\frac{1+(a+b)^2}{2} + 2b^2 - 1 -4b\frac{a+b}{2}\right] \langle \phi_a, \phi_b \rangle = \\
+= - \frac{1}{2} \left[ 1 + (a+b)^2 + 4b^2 - 2 - 4b(a+b)\right] \langle \phi_a, \phi_b \rangle = \\
+= - \frac{1}{2} \left[ (a-b)^2 - 1 \right] \langle \phi_a, \phi_b \rangle = \frac{1}{2} \left[ 1 - (a-b)^2 \right] \langle \phi_a, \phi_b \rangle 
+\end{gathered}
+\end{equation}
+
+We could as well put this into \href{https://www.wolframalpha.com/}{WolframAlpha} and get the results immediately. Anyways, we are ready to code!
 
 \section{Practical considerations} \label{sec:pract}
 \section{Hydrogen atom \(\molecule{H}\)}
