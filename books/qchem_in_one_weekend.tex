@@ -135,15 +135,15 @@ Let us repeat:
 
 There are, in general, many solutions to this equation. It so happens in physical systems that the possible values of \(E\) are bounded below (see \href{https://www.themathcitadel.com/energy-levels-of-molecules-are-bounded-below/}{here} for a proof in case of chemical systems). If the minimal \(E\) is attained by some wavefunction \(\psi\), we call this state the \textit{ground state}. It is the state of most importance, since in general it is the most likely state a random system will be found in (the lower the temperature, the more the probability of ground state, see \href{https://en.wikipedia.org/wiki/Boltzmann_distribution}{Gibbs distribution}). It is this state that we are interested in the most.
 
-\textit{N.B. There are severe technical difficulties in actual mathematical formalism of quantum mechanics. They can be overcome, but the mathematics involved is far beyond the scope of this book. You can find a reasonably graceful introduction to the matter in \cite{ref:hall}.}
+\textit{N.B. There are severe technical difficulties in the actual mathematical formulation of quantum mechanics. They can be overcome, but the mathematics involved is far beyond the scope of this book. You can find a reasonably graceful introduction to the matter in \cite{ref:hall}.}
 
 \newpage
 
 \section{Variational method} \label{sec:var}
 
-Let's recap what we've got so far: we have some \(\hat H\), and we seek for \(\psi\) that has the minimal possible value of \(E\). How can we achieve this? It is the time to lose our very last hope and accept the inevitable: there is no good way. If the Hilbert space we are working with was finite-dimensional, this would be an ordinary problem of numerical linear algebra. Our Hilbert space is the space of some functions or combinations thereor, and it is \textit{infinite-dimensional}. Oops.
+Let's recap what we've got so far: we have some \(\hat H\), and we seek for \(\psi\) that has the minimal possible value of \(E\). How can we achieve this? It is the time to lose our very last hope and accept the inevitable: there is no good way. If the Hilbert space we are working with was finite-dimensional, this would be an ordinary (yet by no means trivial!) problem of numerical linear algebra. Our Hilbert space is the space of some functions or combinations thereof, and it is \textit{infinite-dimensional}. Oops.
 
-The trick is to reformulate our problem. First of all, however, we should talk about Hilbert spaces a bit more. They are not just vector spaces, they come with a special operation called the \textit{inner product}. If you are familiar with the dot product of vectors in geometry, this is essentially the same. Take any two functions --- say, \(\psi\) and \(\phi\), --- and you can get their inner product, denoted by \(\langle \psi, \phi \rangle\) or, using Dirac notation, \(\langle \psi | \phi \rangle\)\footnote{This book is not using Dirac notation.}. This is just a number that can be used to measure lengths, angles, and so on, --- even in infinite-dimensional spaces. The definition that we are going to use (which is a pretty standard one) is the \textit{\(L^2\) inner product}, which is the integral of one function times the complex conjugate\footnote{If you are afraid of complex numbers, do not let fear stop you: we won't need complex numbers in this book.} of the other, i.e.
+The trick is to reformulate our problem. First of all, however, we should talk about Hilbert spaces a bit more. They are not just vector spaces, they come with a special operation called the \textit{inner product}. If you are familiar with the dot product of vectors in geometry, this is essentially the same. Take any two functions --- say, \(\psi\) and \(\phi\), --- and you can get their inner product, denoted by \(\langle \psi, \phi \rangle\) or, using Dirac notation\footnote{Dirac notation is not used in this book.}, \(\langle \psi | \phi \rangle\). This is just a number that can be used to measure lengths, angles, etc, --- even in infinite-dimensional spaces. The definition that we are going to use (which is a pretty standard one) is the \textit{\(L^2\) inner product}, which is the integral of one function times the complex conjugate\footnote{If you are afraid of complex numbers, do not let fear stop you: we won't actually need complex numbers in this book.} of the other, i.e.
 
 \begin{equation} \label{eq:l2prod} \langle \psi, \phi \rangle = \int \psi(x) \overline{\phi(x)} dx \end{equation}
 
@@ -155,29 +155,29 @@ called the \href{https://en.wikipedia.org/wiki/Rayleigh_quotient}{Rayleigh quoti
 
 Of course, this is still too simple to be useful, yet it provides a good foundation. Instead of picking one \(\psi\), we could parametrize it with some parameter \(c\) so that the value of \(R\) depends on \(c\) as well and we can find the minimum of \(R\) with respect to \(c\) using techniques from undergraduate analysis!\textsuperscript{\cite{ref:atkins}} We could even take multiple \(c\)'s and minimize a function of many arguments. This is what is called the \textit{variational method} --- it works by \textit{varying} the wavefunction with respect to parameters and finding the minimum of \(R\), and can be used to get some valuable analytical estimates for various systems\textsuperscript{\cite{ref:atkins}}.
 
-It is not that simple to minimize a function of many parameters, though, unless it depends on the parameters in some primitive way. Say, pick some functions \(\phi_1, \phi_2, \dots, \phi_k\) and let \(\psi(x) = c_1 \phi_1(x) + \dots + c_k \phi_k(x) \). This is the idea of \textit{linear variational method}, where the dependence of \(\psi\) on the parameters is, well, linear. After taking a few derivatives and doing a bit of algebra one arrives\textsuperscript{\cite{ref:atkins}} at this matrix equation:
+It is not that simple to minimize a function of many parameters, though, unless it depends on the parameters in some primitive way. Say, pick some functions \(\phi_1, \phi_2, \dots, \phi_k\) and let \(\psi(x) = c_1 \phi_1(x) + \dots + c_k \phi_k(x) \). This is the idea of \textit{linear variational method}\footnote{Also known as the \textit{Rayleigh-Ritz method}}, where the dependence of \(\psi\) on the parameters is, well, linear. After taking a few derivatives and doing a bit of algebra one arrives\textsuperscript{\cite{ref:atkins}} at this matrix equation:
 
 \begin{equation} \label{eq:var} H c = E S c \end{equation}
 
 where
 
 \begin{itemize}
-\item \(H\) is an \(k\times k\)-matrix with entries \(H_{ij} = \langle \phi_i, \hat H \phi_j \rangle\)
+\item \(H\) is an \(k\times k\)-matrix with entries \(H_{ij} = \langle \phi_i, \hat H \phi_j \rangle = \langle \hat H \phi_i, \phi_j \rangle\) (the second equality is true because \(\hat H\) is \textit{self-adjoint}).
 \item \(S\) is an \(k\times k\)-matrix (called the \textit{overlap matrix}\footnote{In mathematics, this one is better known as \href{https://en.wikipedia.org/wiki/Gramian_matrix}{Gramian matrix}.}) with entries \(S_{ij} = \langle \phi_i, \phi_j \rangle\)
 \item \(c\) is the column vector of parameters \(c_1, \dots, c_k\)
 \end{itemize}
 
-This is known as a \textit{generalized eigenvalue problem} (as opposed to the regular eigenvalue problem with \(S\) being the identity matrix), and it is this equation that we will try to solve.
+This is known as a \textit{generalized eigenvalue problem} (as opposed to the regular \textit{eigenvalue problem} that lacks \(S\)), and it is \textbf{this} equation that we will try to solve.
 
 \section{Harmonic oscillator} \label{sec:harmonic}
 
-Before we get into chemiscal systems, atomic nuclei and electrons, let's first try our hand at a simpler toy quantum system --- the one-dimensional \href{https://en.wikipedia.org/wiki/Quantum_harmonic_oscillator}{\textit{harmonic oscillator}}. It works roughly like a pendulum, being forced back the more it moves off the center. The Hilbert space for this system is denoted \(L^2(\mathbb R)\) --- the space of functions of one real argument that have a finite integral of their modulus squared (otherwise, \(\langle \psi, \psi \rangle\) wouldn't exist). We should be working with complex-valued functions, but as I'll explain in the next section, we can actually restrict ourselves to real numbers everywere.
+Before we get into chemiscal systems, atomic nuclei and electrons, let's first try our hand at a simpler toy quantum system --- the one-dimensional \href{https://en.wikipedia.org/wiki/Quantum_harmonic_oscillator}{\textit{harmonic oscillator}}. It works roughly like a pendulum, being forced back the more it moves off the center\footnote{Any system that is sufficiently close to a local potential energy minimum behaves like a harmonic oscillator. The reason is that in a minimum the derivative of potential energy is zero, so it is well-approximated by the quadratic term: \(U(x+\delta)=U(x)+\frac{1}{2}U''(x)\delta^2\).}. The Hilbert space for this system is denoted \(L^2(\mathbb R)\) --- the space of functions of one real argument that have a finite integral of their modulus squared (otherwise, \(\langle \psi, \psi \rangle\) wouldn't exist). We should be working with complex-valued functions, but as I'll explain in the next section, we can actually restrict ourselves to real numbers everywere.
 
 The Hamiltonian for this system looks like this:
 
 \begin{equation} \label{eq:harmonic-hamiltonian} \hat H \psi = -\frac{1}{2} \frac{d^2}{dx^2} \psi + \frac{x^2}{2} \psi \end{equation}
 
-And the energy eigenvalues are
+And the energy eigenvalues are\cite{ref:atkins}
 
 \begin{equation} E_k = k + \frac{1}{2}, k = 0,1,2,\dots \end{equation}
 
