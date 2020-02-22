@@ -5,8 +5,8 @@ all: *.pdf
 %.pdf: %.tex
 	mkdir -p build
 	cd build
-	pdflatex ../$<
-	pdflatex ../$<
+	pdflatex --shell-escape ../$<
+	pdflatex --shell-escape ../$<
 	mv $@ ..
 
 .PHONY: clean

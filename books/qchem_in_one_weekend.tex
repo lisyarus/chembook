@@ -33,18 +33,25 @@
 \usepackage{amsfonts}
 \usepackage{extarrows}
 
-\setlength{\parskip}{0.4em}
+\usepackage{bashful}
 
-\title{Quantum Chemistry In One Weekend}
-\author{Nikita Lisitsa \\ \texttt{lisyarus@gmail.com}}
-\date{circa February 2020}
+\setlength{\parskip}{0.4em}
 
 \newcommand{\equalby}[1]{\xlongequal{\text{by }\eqref{#1}}}
 \newcommand{\intR}{\int\limits_\mathbb R}
 
 \begin{document}
 
+\title{Quantum Chemistry In One Weekend}
+\author{Nikita Lisitsa \\ \texttt{lisyarus@gmail.com}}
+\date{\today}
+
 \maketitle
+
+\bash
+git rev-list --all --count
+\END
+\centerline{Revision \bashStdout}
 
 \newpage
 
