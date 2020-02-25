@@ -35,10 +35,34 @@
 
 \usepackage{bashful}
 
-\setlength{\parskip}{0.4em}
+\usepackage{graphicx}
+\graphicspath{ {./images/} }
+
+\usepackage{minted}
+% \usemintedstyle{fruity}
+\definecolor{codebgcolor}{HTML}{282828}
+\newenvironment{python}
+{\VerbatimEnvironment
+\begin{minted}[bgcolor=codebgcolor, style=fruity]{python}}
+{\end{minted}}
+\newenvironment{console}
+{\VerbatimEnvironment
+\begin{minted}[frame=single]{text}}
+{\end{minted}}
+
+\newcommand{\githubrepo}{https://github.com/lisyarus/chembook}
+\newcommand{\codeonline}[1]{\textit{The final source code for this section is available \href{\githubrepo/blob/master/code/#1}{online}.}}
 
 \newcommand{\equalby}[1]{\xlongequal{\text{by }\eqref{#1}}}
 \newcommand{\intR}{\int\limits_\mathbb R}
+
+\newcommand{\image}[1]{
+\begin{center}
+\includegraphics[width=\textwidth/2]{#1.png}
+\end{center}
+}
+
+\setlength{\parskip}{0.4em}
 
 \begin{document}
 
@@ -182,7 +206,7 @@ This is known as a \textit{generalized eigenvalue problem} (as opposed to the re
 
 \section{Harmonic oscillator} \label{sec:harmonic}
 
-Before we get into chemiscal systems, atomic nuclei and electrons, let's first try our hand at a simpler toy quantum system --- the one-dimensional \href{https://en.wikipedia.org/wiki/Quantum_harmonic_oscillator}{\textit{harmonic oscillator}}. It works roughly like a pendulum, being forced back the more it moves off the center\footnote{Any system that is sufficiently close to a local potential energy minimum behaves like a harmonic oscillator. The reason is that in a minimum the derivative of potential energy is zero, so it is well-approximated by the quadratic term: \(U(x+\delta)=U(x)+\frac{1}{2}U''(x)\delta^2\).}. The Hilbert space for this system is denoted \(L^2(\mathbb R)\) --- the space of functions of one real argument that have a finite integral of their modulus squared (otherwise, \(\langle \psi, \psi \rangle\) wouldn't exist). We should be working with complex-valued functions, but as I'll explain in the next section, we can actually restrict ourselves to real numbers everywere.
+Before we get into chemiscal systems, atomic nuclei and electrons, let's first try our hand at a simpler toy quantum system --- the one-dimensional \href{https://en.wikipedia.org/wiki/Quantum_harmonic_oscillator}{\textit{harmonic oscillator}}. It works roughly like a pendulum, being forced back the more it moves off the center\footnote{Any system that is sufficiently close to a local potential energy minimum behaves like a harmonic oscillator. The reason is that in a minimum the derivative of potential energy is zero, so it is well-approximated by the quadratic term: \(U(x+\delta)=U(x)+\frac{1}{2}U''(x)\delta^2\).}. The Hilbert space for this system is denoted \(L^2(\mathbb R)\) --- the space of functions of one real argument that have a finite integral of their modulus squared (in other words, \(\langle \psi, \psi \rangle\) is finite). We should be working with complex-valued functions, but as I'll explain in the next section, we can actually restrict ourselves to real numbers everywere.
 
 The Hamiltonian for this system looks like this:
 
@@ -194,7 +218,7 @@ And the energy eigenvalues are\cite{ref:atkins}
 
 Thus, the ground state energy is \(E_0=\frac{1}{2}\). Let's try to get this number without solving the equation \eqref{eq:shrod} directly, employing the equation \eqref{eq:var} instead!
 
-All we need to do is pick a good selection of \textit{basis functions} \(\phi_k\), also called the \textit{basis set}. What makes a basis set better or worse? We have a dilemma here: on one hand, the basis should be somewhat resembling the actual ground state, so that we can get closer to real ground state energy; on the other hand, we'll have to compute a bunch of integrals \(\langle \phi_i, \phi_j\rangle\) and \(\langle \phi_i, \hat H \phi_j\rangle\), so the basis functions should be simple enough so that we can tackle this integrals.
+All we need to do is pick a good selection of \textit{basis functions} \(\phi_k\), also called the \textit{basis set}. What makes a basis set better or worse? We have a dilemma here: on one hand, the basis should be somewhat resembling the actual ground state, so that we can get closer to real ground state energy; on the other hand, we'll have to compute a bunch of integrals \(\langle \phi_i, \phi_j\rangle\) and \(\langle \phi_i, \hat H \phi_j\rangle\), so the basis functions should be simple enough so that the integrals are tractable\footnote{We could approach them numerically, but this is orders of magnitude slower and less accurate.}.
 
 There are many options here, and I encourage you to try your own basis set if you are not afraid of computing a few integrals. The one I'll use will be
 
@@ -288,11 +312,264 @@ Finally, the kinetic integral:
 = - \left[\frac{1+(a+b)^2}{2} + 2b^2 - 1\right] \langle \phi_a, \phi_b \rangle + 4b e^{-\frac{(a-b)^2}{2}} \frac{a+b}{2} \sqrt\frac{\pi}{2} \equalby{eq:exp-overlap} \\
 = - \left[\frac{1+(a+b)^2}{2} + 2b^2 - 1 -4b\frac{a+b}{2}\right] \langle \phi_a, \phi_b \rangle = \\
 = - \frac{1}{2} \left[ 1 + (a+b)^2 + 4b^2 - 2 - 4b(a+b)\right] \langle \phi_a, \phi_b \rangle = \\
-= - \frac{1}{2} \left[ (a-b)^2 - 1 \right] \langle \phi_a, \phi_b \rangle = \frac{1}{2} \left[ 1 - (a-b)^2 \right] \langle \phi_a, \phi_b \rangle 
+= \frac{1 - (a-b)^2}{2} \langle \phi_a, \phi_b \rangle 
 \end{gathered}
 \end{equation}
 
 We could as well put this into \href{https://www.wolframalpha.com/}{WolframAlpha} and get the results immediately. Anyways, we are ready to code!
+
+\codeonline{harmonic.py}
+
+First of all, import the required libraries:
+
+\begin{python}
+import math
+import numpy
+import scipy.linalg
+\end{python}
+
+Write down the formulas for overlap\eqref{eq:exp-overlap}, kinetic\eqref{eq:exp-kinetic}, and potential\eqref{eq:exp-potential} integrals in python code:
+
+\begin{python}
+def overlap(a, b):
+    return math.sqrt(math.pi / 2) * numpy.exp(- (a - b)**2 / 2)
+
+
+def potential(a, b):
+    return ((a + b)**2 + 1) / 8 * overlap(a,b)
+
+
+def kinetic(a, b):
+    return (1 - (a-b)**2) / 2 * overlap(a,b)
+\end{python}
+
+I am using \texttt{numpy.exp} instead of \texttt{math.exp} so that we can pass numpy arrays in place of \texttt{a} and \texttt{b}.
+
+Now, time to build the matrices of our main equation\eqref{eq:var}: \(H \psi = E S \psi\). We need a function that, given a description of a basis set, returns a pair of matrices \texttt{(H,S)}. Our basis functions \(\psi_a\) are parametrized by a single parameter \texttt{a}, so a basis set can be described as a list of numbers that correspond to different \texttt{a}'s.
+
+\begin{python}
+def equation(basis):
+    D = len(basis)
+    H = numpy.zeros((D,D))
+    S = numpy.zeros((D,D))
+
+    for i in range(D):
+        for j in range(D):
+            ai = basis[i]
+            aj = basis[j]
+
+            H[i,j] = kinetic(ai,aj) + potential(ai,aj)
+            S[i,j] = overlap(ai,aj)
+
+    return (H, S)
+\end{python}
+
+Next, we need a function that will solve the generalized eigenvalue problem\eqref{eq:var}. Luckily, \texttt{scipy} package already knows how to deal with these! We also need to normalize the resulting wavefunctions, but \texttt{scipy.linalg.eigh} does this as well.
+
+\begin{python}
+def solve(H, S):
+    return scipy.linalg.eigh(H, S)
+\end{python}
+
+We have all the building blocks to run the code. What basis shall we pick, though? Let's try something silly, like a basis of \(e^{-(x+2)^2}\), \(e^{-(x+1)^2
+}\), \(e^{-x^2}\), \(e^{-(x-1)^2}\), and \(e^{-(x-2)^2}\):
+
+\begin{python}
+basis = [-2, -1, 0, 1, 2]
+energy, coeffs = solve(*equation(basis))
+print("Energy:", energy)
+\end{python}
+
+Here, \texttt{energy} is an array of energy eigenvalues (values of \(E\) in \(H\psi=ES\psi\)) while \texttt{coeffs} is a matrix with its k-th \textit{column} containing the coefficients \(c_i\) in the sum \(\psi(x) = \sum c_i \phi_i(x)\) for the quantum state \(\psi\) that corresponds to the k-th value of \(E\).
+
+If you run the script, you should get something like
+
+\begin{console}
+Energy: [0.50028959 1.50654872 2.50906592 3.65198693 4.52712922]
+\end{console}
+
+We got the ground-state energy of \texttt{0.50028959}, correct within 0.06\%! Even the next two energies are very close to the real values of \texttt{1.5} and \texttt{2.5}. Congratulations! You've just completed your (probably) first numerical quantum-mechanical computation. Before we move on to chemical systems, let's see what else we can do with our current code.
+
+We can optimize the \texttt{equation} function by using \texttt{numpy.meshgrid}, since operations on \texttt{numpy} arrays are generally faster than python loops:
+
+\begin{python}
+def equation(basis):
+    Ai, Aj = numpy.meshgrid(basis, basis)
+
+    H = kinetic(Ai, Aj) + potential(Ai, Aj)
+    S = overlap(Ai, Aj)
+
+    return (H, S)
+\end{python}
+
+We can plot the wavefunction that we've found and compare it against the true ground-state wavefunction \(\frac{1}{\sqrt[4]{\pi}}e^{-\frac{x^2}{2}}\). For that matter, define a function that computes \(\phi_a\):
+
+\begin{python}
+def phi(a, x):
+	return numpy.exp(-(x-a)**2)
+\end{python}
+
+Then, a function that evaluates the wavefunction:
+
+\begin{python}
+def wavefunction(basis, coeffs, x):
+    assert len(basis) == len(coeffs)
+
+    y = numpy.zeros(x.shape)
+    for i in range(len(basis)):
+        y += coeffs[i] * phi(basis[i], x) 
+    return y
+\end{python}
+
+For convenience, let's define the real wavefunction as well:
+
+\begin{python}
+def ground_state(x):
+	return 1.0 / math.pow(math.pi, 0.25) * numpy.exp(- x**2 / 2.0)
+\end{python}
+
+To plot the results, add this to the end of the script:
+
+\begin{python}
+x = numpy.linspace(-5, 5, 1001)
+computed_gound_state = wavefunction(basis, coeffs[:,0], x)
+real_ground_state = ground_state(x)
+
+pyplot.plot(x, computed_gound_state, label="computed")
+pyplot.plot(x, real_ground_state, label="real")
+pyplot.grid()
+pyplot.legend()
+pyplot.show()
+\end{python}
+
+The \texttt{:} in \texttt{coeffs[:,0]} is a special placeholder that mean \textit{all possible indices}. Thus, \texttt{coeffs[:,0]} takes the 0-th column of \texttt{coeffs}.
+
+If you run the code, you might (or might not!) get something like this:
+
+\image{harmonic-wavefunction-negative}
+
+Why is your wavefunction upside down?! There's nothing wrong with that, actually: if \(\psi\) is a solution, then \(-\psi\) is a solution as well. In fact, these two represent \textit{the same quantum state}. We could negate our wavefunction if it is negative at \(x=0\):
+
+\begin{python}
+x = numpy.linspace(-5, 5, 1001)
+computed_gound_state = wavefunction(basis, coeffs[:,0], x)
+real_ground_state = ground_state(x)
+
+if wavefunction(basis, coeffs[:,0], 0.0) < 0.0:
+    computed_gound_state *= -1.0
+
+pyplot.plot(x, computed_gound_state, label="computed")
+pyplot.plot(x, real_ground_state, label="real")
+pyplot.grid()
+pyplot.legend()
+pyplot.show()
+\end{python}
+
+This code will result in an error like this:
+
+\begin{console}
+AttributeError: 'float' object has no attribute 'shape'
+\end{console}
+
+Oops, we need to fix \texttt{wavefunction} so that it works in case \texttt{x} is a number and not a \texttt{numpy} array:
+
+\begin{python}
+def zero_like(x):
+    if type(x) == numpy.ndarray:
+        return numpy.zeros(x.shape)
+    elif type(x) == float:
+        return 0.0
+    else:
+        raise RuntimeError("Unknown type {}".format(type(x)))
+
+
+def wavefunction(basis, coeffs, x):
+    assert len(basis) == len(coeffs)
+
+    y = zero_like(x)
+    for i in range(len(basis)):
+        y += coeffs[i] * phi(basis[i], x) 
+    return y
+\end{python}
+
+This time, we should have the two wavefunctions on the same side of the x-axis:
+
+\image{harmonic-wavefunction}
+
+As you can see, our computed solution is very close the the true one! Can we get any closer? Sure, but we need a better basis than just \texttt{[-2, -1, 0, 1, 2]}. We need to tweak a bunch of numbers so that another number (the energy) gets smaller --- this is precisely what is called mathematical optimization. Luckily, \texttt{scipy} already comes with routines that do just that! Add this to imports:
+
+\begin{python}
+import scipy.optimize
+\end{python}
+
+Now, define our target function that we want to minimize --- the ground-state energy:
+
+\begin{python}
+def target(basis):
+	energy, coeffs = solve(*equation(basis))
+	return energy[0]
+\end{python}
+
+The main script now goes as follows: we pick initial basis parameters, optimize them, and see the energy values:
+
+\begin{python}
+def optimize(basis):
+	result = scipy.optimize.minimize(target, basis)
+	if not result.success:
+	    raise RuntimeError("Energy minimization failed")
+	return result.x
+
+
+basis = optimize([-2, -1, 0, 1, 2])
+print("Basis:", basis)
+
+energy, coeffs = solve(*equation(basis))
+print("Energy:", energy)
+\end{python}
+
+The results are pretty convincing:
+
+\begin{console}
+Basis: [-1.62551507e+00 -7.69713217e-01 -1.08490137e-04  7.69683879e-01
+  1.62560700e+00]
+Energy: [0.50000139 1.50009365 2.50253397 3.53463459 4.78613676]
+\end{console}
+
+We can plot some more wavefunctions, not only the ground state:
+
+\begin{python}
+x = numpy.linspace(-5, 5, 1001)
+
+for k in range(3):
+    state = wavefunction(basis, coeffs[:,k], x)
+    pyplot.plot(x, state, label="E = {}".format(energy[k]))
+
+pyplot.grid()
+pyplot.legend()
+pyplot.show()
+\end{python}
+
+\image{harmonic-wavefunction-3}
+
+We could try the same thing starting with a larger basis, say, from \(-5\) to \(5\):
+
+\begin{python}
+basis = optimize(range(-5, 6))
+energy, coeffs = solve(*equation(basis))
+print("Energy:", energy)
+\end{python}
+
+Notice how the ground-state energy goes even closer to the true value of \(0.5\).
+
+\begin{console}
+Energy: [ 0.50000007  1.50000621  2.5002545   3.50575575  4.56901491
+  5.85678673  6.52567398  9.508999    9.70153557 14.49609236
+ 14.55364916]
+\end{console}
+
+This section is already 8 pages long. I hope you got the basis idea, for it is time to move on to real atoms.
+
+\newpage
 
 \section{Practical considerations} \label{sec:pract}
 \section{Hydrogen atom \(\molecule{H}\)}
