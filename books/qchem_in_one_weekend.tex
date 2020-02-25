@@ -572,6 +572,30 @@ This section is already 8 pages long. I hope you got the basis idea, for it is t
 \newpage
 
 \section{Practical considerations} \label{sec:pract}
+
+We have seen that in order to use the linear variational method we need to pick a nice basis set --- a bunch of parametrized functions that are well-suited for integrals. A particularly nice choice for chemical systems are \textit{gaussian-type orbitals}, often abbreviated as GTOs, multiplied by Hermite polynomials. Usually, \textit{cartesian} GTOs (CGTOs) are used, where a gaussian is multiplied by monomials of the form \(x^ay^bz^c\). However, Hermite polynomials make the integrals much easier, --- in fact, the derivations of integrals for CGTOs often include steps to convert them to Hermite polynomials, so why not use them directly instead? Furthemore, this cartesian gaussian-type orbitals are usually used indirectly: the actual basis set used is Slater-type orbitals (STOs), with functions taken directly from eigenstates of the hydrogen atom, but those are internally represented as a linear combination of GTOs (known as \textit{contracted} GTOs or cGTOs) to simplify the integrals. It is however a lot easier to work with gaussian-type functions instead. The general form of such a function looks like this:
+
+\begin{equation}
+\phi_{R,\sigma,n}(x,y,z) = H_{n_x}(x)H_{n_y}(y)H_{n_z}(z) e^{-\frac{(x-R_x)^2+(y-R_y)^2+(z-R_z)^2}{\sigma^2}}
+\end{equation}
+
+It has three integer parameters \(n_x,n_y,n_z\) and four real parameters \(R_x,R_y,R_z,\sigma\). This function is localized around the point \((R_x,R_y,R_z)\), with the parameter \(\sigma\) controlling the spread (less \(\sigma\) means more localized function). \(H_n(x)\) is the \(n\)-th Hermite polynomial, and the integers \(n_x,n_y,n_z\) are responsible for that. They make out basis functions look more like hydrogen p-orbitals, d-orbitals, f-orbitals, and so on. I've put the derivations of the integrals with this basis functions to the appendix, since they are somewhat notorious and non-essential. You may look into the appendix and type the formulas into python code yourself, or you may download a package from \href{\githubrepo/blob/master/code/hgto.py}{github} that implements them. The code in the following sections assumes the latter.
+
+As I've already said, although complex numbers are invaluable in quantum mechanics, we don't need them. The reason is that in chemical systems the energy eigenstates can always be made real\footnote{Technically, this boils down to the fact that the Hamiltonian commutes with complex conjugation, thus also with projectors on spaces of real-valued and imaginary-valued functions. If an eigenstate is purely imaginary-valued, multiply it by \(i\) to get a real-valued one, otherwise apply the projector to real-valued functions.}. Note however that a general state is a mixture of those eigenstates with \textit{complex coefficients}.
+
+Any real-world computation is unimaginable without a choice of units. There is a specialized unit system called the \href{https://en.wikipedia.org/wiki/Hartree_atomic_units}{\textit{atomic units}}, where most constants relevant to quantum chemistry are set to \(1\), specifically
+
+\begin{itemize}
+\item The electron mass \(m_e\)
+\item The electron charge \(e\)
+\item The reduced Planck constant \(\hbar\)
+\item The Coulomb constant \(k_e\)
+\end{itemize}
+
+The energy unit in this system is called \href{https://en.wikipedia.org/wiki/Hartree}{\textit{hartree}} and equals approximately \(27.2\) electron-volts or \(4.35\times 10^{-18}\) joules. There's a \href{http://www.colby.edu/chemistry/PChem/Hartree.html}{nice energy converter online}. The speed of light in this unit system is just \(137\). Keep all that in mind when reading the equations in the following sections: there are no physical constants in them, not because they shouldn't be there, but because they are all equal to \(1\).
+
+\newpage
+
 \section{Hydrogen atom \(\molecule{H}\)}
 \section{Helium cation \(\molecule{He}^+\)} 
 \section{Lithium 2+ cation \(\molecule{Li}^{2+}\)}
