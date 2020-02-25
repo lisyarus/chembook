@@ -2,11 +2,12 @@
 
 all: *.pdf
 
-%.pdf: %.tex
+%.pdf: %.tex images/*.png
 	mkdir -p build
+	ls build/images || ln -sv ../images build/images
 	cd build
-	pdflatex --shell-escape ../$<
-	pdflatex --shell-escape ../$<
+	pdflatex -shell-escape -interaction=nonstopmode -halt-on-error ../$<
+	pdflatex -shell-escape -interaction=nonstopmode -halt-on-error ../$<
 	mv $@ ..
 
 .PHONY: clean
