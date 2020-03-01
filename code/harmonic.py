@@ -30,8 +30,8 @@ def equation(basis):
     return (H, S)
 
 
-def solve(H, S, eigvals_only=False):
-    return scipy.linalg.eigh(H, S, eigvals_only=eigvals_only)
+def solve(H, S):
+    return scipy.linalg.eigh(H, S)
 
 
 def zero_like(x):
