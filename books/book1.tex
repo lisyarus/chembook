@@ -599,6 +599,240 @@ One final note: all that follows assumes the \href{https://en.wikipedia.org/wiki
 \newpage
 
 \section{Hydrogen atom \(\molecule{H}\)}
+
+At last we arrived to an actual chemical problem: the hydrogen atom. It is one of the few real-world quantum systems with known analytical solutions (see \href{https://en.wikipedia.org/wiki/Hydrogen-like_atom}{here}). The energies are (in atomic units!) \(E_n = -\frac{1}{2n^2}\), where \(n=1,2,3,\dots\) is that number written in front of atomic orbitals like 1s, 2s, 2p, 3s, 3p, 3d, etc. The corresponding wavefunctions look like those \href{https://en.wikipedia.org/wiki/Atomic_orbital}{funny blobs}\footnote{See also \href{https://lisyarus.github.io/webgl/gto.html}{my interactive visualizer}.} from any introductory chemistry textbook.
+
+\codeonline{hydrogen-s.py}
+
+As I've said in the \nameref{sec:pract} section, the code assumes you have the \texttt{hgto} module that implements all the integrals for Hermite-Gaussian orbitals. Start with the imports:
+
+\begin{python}
+import numpy
+import scipy.linalg
+import scipy.optimize
+import hgto
+\end{python}
+
+Now, the already familiar equation-building function:
+
+\begin{python}
+def equation(basis):
+
+    B = len(basis)
+
+    H = numpy.zeros((B,B))
+    S = numpy.zeros((B,B))
+
+    n = hgto.Nucleus(1.0)
+
+    for i in range(B):
+        for j in range(B):
+            bi = basis[i]
+            bj = basis[j]
+            S[i,j] = hgto.overlap(bi, bj)
+            H[i,j] = hgto.kinetic(bi, bj) + hgto.nuclear_attraction(bi, bj, n)
+
+    return (H, S)
+\end{python}
+
+You've probably noticed that we have a new thing here: the nucleus, represented as an object of type \texttt{hgto.Nucleus}. The constructor has a second parameter \texttt{origin} that corresponds to the location of the nucleus. In the case of a single atom, it is reasonable to leave it at the default value of \texttt{[0.0,0.0,0.0]}. The \texttt{nuclear\_attraction} function computes the integral corresponding to attraction to that single nucleus. \texttt{basis} is a list of basis functions represented as objects of type \texttt{hgto.HGTO}.
+
+Next, the function that solves the generalized eigenvalue equation doesn't change at all:
+
+\begin{python}
+def solve(H, S):
+    return scipy.linalg.eigh(H, S)
+\end{python}
+
+Now, time to pick a set of basis functions. The constructor of the \texttt{hgto.HGTO} class looks like this:
+
+\begin{python}
+    def __init__(self, sigma, degree=[0,0,0], origin=[0.0,0.0,0.0]):
+        ...
+\end{python}
+
+The \texttt{sigma}, \texttt{degree}, and \texttt{origin} parameters correspond to \(\sigma\), \([n_x,n_y,n_z]\), and \([R_x,R_y,R_z]\) parameters of an HGTO-orbital \(H_{n_x}(x)H_{n_y}(y)H_{n_z}(z) e^{-\frac{(x-R_x)^2+(y-R_y)^2+(z-R_z)^2}{\sigma^2}}\), respectively. Since we are working with a single atom, it is reasonable to set the origin of all basis functions to the location of the nucleus.
+
+The \texttt{degree} parameter is a bit subtler. The value of \texttt{[0,0,0]} corresponds to a basis function that is radially symmetric, much like the s-orbitals of hydrogen, so let's start with them. Thus, our only adjustable parameters will be \texttt{sigma}. Write a function that takes a list of \texttt{sigma} and outputs a corresponding basis:
+
+\begin{python}
+def make_basis(params):
+    basis = []
+
+    for sigma in params:
+        basis.append(hgto.HGTO(sigma))
+
+    return basis
+\end{python}
+
+As before, define the optimization target function and the optimization routine. This time, we will select the optimization method other than the default one: I figured that the \textit{Nelder-Mead} simplex-based method works pretty well (you may try other methods, of course!). We'll say it to be adaptive, so that it tweaks the internal parameters as needed. It is also helpful to provide a callback function that will record optimization progress.
+
+\begin{python}
+def target(params):
+    basis = make_basis(params)
+    energy, coeffs = solve(*equation(basis))
+    return energy[0]
+
+
+def callback(params):
+    print(params)
+
+
+def optimize(params):
+    result = scipy.optimize.minimize(target, params, method='Nelder-Mead',
+        options={'adaptive': True}, callback=callback)
+    if not result.success:
+        raise RuntimeError("Energy minimization failed")
+    return result.x
+\end{python}
+
+Finally, pick a random set of, say, five initial parameters, invoke the optimization, and look at the results. How do I know to choose the parameters in the \([0.5, 5.0]\) range? This is where our choice of units helps: all related constants are set to 1, and we can expect all physically significant properties of the system to be of the same order of magnitude, that is, close to 1. Thus, we choose some range that is close to 1.
+
+\begin{python}
+params = optimize(numpy.random.uniform(0.5, 5.0, 5))
+
+basis = make_basis(params)
+energy, coeffs = solve(*equation(basis))
+print("Energy:", list(energy))
+\end{python}
+
+You might see some errors here. Firstly, the minimization routine might not succeed after some default maximal number of iterations, --- this can probably be fixed by adjusting the solver options. Secondly, you may encounter an error like this:
+
+\begin{console}
+numpy.linalg.LinAlgError: the leading minor of order 2 of 'b' is not 
+positive definite. The factorization of 'b' could not be completed and
+no eigenvalues or eigenvectors were computed.
+\end{console}
+
+This comes from the Cholesky decomposition that is invoked as part of \texttt{scipy.linalg.eigh} and means that the basis that we supplied is too close to being linearly dependent. This can be fixed using singular value decomposition and restricting to a better subbasis.
+
+It is however much easier to just call the script again in hope that this time the random initial parameters would be better, or even wrap the \texttt{optimize} routine with a loop that starts over and over again until the optimization succeeds without an exception. In any case, you should get something like this:
+
+\begin{console}
+Energy: [-0.4998098322278446, 0.023987247113695483, 1.5010945028423488,
+ 9.012692390104283, 60.979054059578246]
+\end{console}
+
+The ground-state energy is very close to the actual value of \(-0.5\), while the others are complete garbage (they are even positive, meaning that they do not correspond to bound states). This is a general phenomenon: is you optimize for something, don't expect something else to be optimized as well. There are several ways to make this work for excited (\(n=2,3,\dots\)) states. One could find the ground state first, then employ the same procedure but with an extra step of reprojecting the basis on the subspace orthogonal to the ground state to find the first excited state, then doing the same but orthogonal to the two already found states to find the next excited state, and so on. This makes the basis grow rapidly (since you need both the old basis and the new one to make the new one orthogonal to the old). We may, however, try to trick our solver a bit, and make it optimize for the \textit{sum} of a few lowest energies (say, three of them), at the price of having a lower overall precision:
+
+\begin{python}
+def target(params):
+    basis = make_basis(params)
+    energy, coeffs = solve(*equation(basis))
+    return sum(energy[0:3])
+\end{python}
+
+The results are not that bad:
+
+\begin{console}
+Energy: [-0.4976228254475445, -0.12462108469029497, -0.05542836872909056,
+ 0.5864866278502727, 7.547798891619299]
+\end{console}
+
+The first three energy values are pretty close to the actual values of \(-0.5\), \(-0.125\), and \(-\frac{1}{18}=-0.0(5)\), corresponding to 1s, 2s, and 3s hydrogen orbitals. Time to visualize them!
+
+How does one visualize a three-dimensional function? Usually this requires volume rendering, isosurfaces, or slicing the space. However, while we are dealing with highly symmetric functions, we can manage without such sophisticated machinery. Recall that s-orbitals are spherically symmetric, meaning that we can just plot a cross-section along the X axis.
+
+As before, add \texttt{matplotlib} to the imports:
+
+\begin{python}
+import matplotlib.pyplot as pyplot
+\end{python}
+
+Write the function that evaluates our wavefunction at a specific point (\texttt{x}, \texttt{y}, and \texttt{z} may as well be \texttt{numpy} arrays):
+
+\begin{python}
+def zero_like(x):
+    if type(x) == numpy.ndarray:
+        return numpy.zeros(x.shape)
+    elif type(x) == float:
+        return 0.0
+    else:
+        raise RuntimeError("Unknown type {}".format(type(x)))
+
+
+def wavefunction(basis, coeffs, x, y, z):
+    assert len(basis) == len(coeffs)
+
+    f = zero_like(x)
+    for i in range(len(basis)):
+        f += coeffs[i] * basis[i](x, y, z)
+    return f
+\end{python}
+
+Now, evaluate our three lowest states along the X axis and plot them:
+
+\begin{python}
+L = 30
+N = 1001
+X = numpy.linspace(-L, L, N)
+
+for k in range(3):
+    state = wavefunction(basis, coeffs[:,k], X, 0, 0)
+    pyplot.plot(x, state, label="E = {0:.5f}".format(energy[k]))
+
+pyplot.grid()
+pyplot.legend()
+pyplot.show()
+\end{python}
+
+This results in something like (remember that the wavefunctions may be upside down)
+
+\image{hydrogen-wavefunction-s-3}
+
+A few notable things can be read from this plot:
+
+\begin{itemize}
+\item All states have singularities\footnote{Even for many-electron systems one can reconstruct the original system knowing this cusps only, see \href{https://en.wikipedia.org/wiki/Kato_theorem}{Kato's cusp condition}. This is especially important for the foundations of \href{https://en.wikipedia.org/wiki/Density_functional_theory}{density functional theory (DFT)}.} at the origin, where the nucleus is located
+\item Higher-energy orbitals are less concentrated near the nucleus and are more spread around
+\item 1s orbital has the same sign everywhere, 2s orbital changes sign once, 3s changes sign twice, etc.
+\end{itemize}
+
+Let's plot the electron density along the X axis as well:
+
+\begin{python}
+def density(basis, coeffs, x, y, z):
+    assert len(basis) == len(coeffs)
+
+    f = zero_like(x)
+    for i in range(len(basis)):
+        for j in range(len(basis)):
+            f += coeffs[i] * coeffs[j] * basis[i](x, y, z) * basis[j](x, y, z)
+    return f
+\end{python}
+
+\begin{python}
+for k in range(3):
+    state = density(basis, coeffs[:,k], X, 0, 0)
+    pyplot.plot(x, state, label="E = {0:.5f}".format(energy[k]))
+
+pyplot.grid()
+pyplot.legend()
+pyplot.show()
+\end{python}
+
+\image{hydrogen-density-s-3}
+
+This is hardly useful, since the density gets extremely small as we get futher from the nucleus. This, however, is the electron density \textit{at a specific point}, while we might be interested in density \textit{of a specific distance from the nucleus}, i.e. density integrated over a sphere of a specific radius. Since the states are spherically symmetric, the integral over a sphere is a value at a point times the area of the sphere \(4\pi r^2\):
+
+\begin{python}
+def radial_density(basis, coeffs, r):
+    f = density(basis, coeffs, r, 0, 0)
+    return f * numpy.pi * 4 * (r**2)
+\end{python}
+
+\begin{python}
+R = numpy.linspace(0, L, N)
+
+for k in range(3):
+    state = radial_density(basis, coeffs[:,k], R)
+    pyplot.plot(R, state, label="E = {0:.5f}".format(energy[k]))
+\end{python}
+
+\image{hydrogen-radial-s-3}
+
+This plot is my favorite concerning s-orbitals. You can easily see where are those orbitals localized in space, where are the sign changes, etc. The distance of maximal probability for the 1s-orbital is known as \href{https://en.wikipedia.org/wiki/Bohr_radius}{Bohr radius} (in atomic units it is exactly equal to 1).
+
 \section{Helium cation \(\molecule{He}^+\)} 
 \section{Lithium 2+ cation \(\molecule{Li}^{2+}\)}
 \section{Dihydrogen cation \(\molecule{H}_2^+\)}
