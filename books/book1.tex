@@ -77,6 +77,11 @@ git rev-list --all --count
 \END
 \centerline{Revision \bashStdout}
 
+\bash
+[[ "$(git diff --stat)" == "" ]] || echo "(dirty)"
+\END
+\centerline{\bashStdout}
+
 \newpage
 
 \tableofcontents
