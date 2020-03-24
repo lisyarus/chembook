@@ -920,7 +920,40 @@ Radial density doesn't make much sense in this case, since p-orbitals are not sp
 
 You may try getting more sophisticated orbitals (3d, 4d, 4f, ...) with higher \texttt{degree} of HGTO's, but the basis starts being close to degenerate, and \texttt{numpy.linalg.LinAlgError} appears more and more.\footnote{As I've said before, it is possible to overcome this using SVD, but this is out of the scope of this book.} At this point, we move on to other systems.
 
-\section{Helium cation \(\molecule{He}^+\)} 
+\newpage
+
+\section{Helium cation \(\molecule{He}^+\)}
+
+The next one-electron system we are going to explore is the helium +1 cation --- a helium atom that lost one of its two electrons. This one is very similar to the hydrogen atom, the only difference being the nucleus charge. Look at \href{https://en.wikipedia.org/wiki/Hydrogen-like_atom\#Non-relativistic_wavefunction_and_energy}{wikipedia} again to see what the energies are: \(-\frac{Z^2}{2n^2}\), where \(Z\) is the charge of the nucleus: \(Z=1\) for hydrogen, \(Z=2\) for helium. Thus, we expect the energies to be 4 times the energies for hydrogen.
+
+\codeonline{helium-s.py}
+
+Change the nucleus charge to 2:
+
+\begin{python}
+def equation(basis):
+    ...
+    n = hgto.Nucleus(2.0)
+    ...
+\end{python}
+
+to get
+
+\begin{console}
+Energy: [-1.990491312820971, -0.49848433212591076, -0.22171347050750198,
+ 2.3459781841680547, 30.19206227078643]
+\end{console}
+
+The three first energies are close to being right. Plotting the radial density
+
+\image{helium-radial-s-3}
+
+we see that the orbitals are closer to the nucleus. This makes sense: the higher the nuclear charge, the stronger is the nucleus-electron attraction. This leads to an interesting phenomenon: all atoms are \textit{roughly} of the same size! Larger atomic number means higher nucleus charge, so the electrons are attracted more and fly closer to the nucleus; however, more electrons means they repel each other and don't concentrate near the nucleus.\footnote{This absence of electron concentration is also largely due to the \href{https://en.wikipedia.org/wiki/Pauli_exclusion_principle}{Pauli principle}, in turn related to the fact that electrons are fermions. Bosons, however, \textit{can} concentrate in one place, which leads to the existence of \href{https://en.wikipedia.org/wiki/Bose\%E2\%80\%93Einstein_condensate}{Bose-Einstein condensate}.}
+
+We can find and plot the p-orbitals as well, which will again look the same as hydrogen p-orbitals, but closer to the nucleus and having higher energy.
+
+Everything interesting related to helium starts when we add a second electron. Since this book considers one-electron systems only, we move on.\footnote{A \textit{rough} description of what happens in a real helium atom is that the two-electron density looks a lot like the 1s-orbital, but slightly more spread out due to electron-electron repulsion. Pauli exclusion principle doesn't change anything in two-electron systems: we have two electrons and two possible spins as well. See also \href{https://twitter.com/lisyarus/status/1187373256178913282?s=20}{here} and \href{https://twitter.com/lisyarus/status/1188908501436960770?s=20}{there}.}
+
 \section{Lithium 2+ cation \(\molecule{Li}^{2+}\)}
 \section{Dihydrogen cation \(\molecule{H}_2^+\)}
 \section{Trihydrogen 2+ cation \(\molecule{H}_3^{2+}\)}
