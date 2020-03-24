@@ -954,7 +954,40 @@ We can find and plot the p-orbitals as well, which will again look the same as h
 
 Everything interesting related to helium starts when we add a second electron. Since this book considers one-electron systems only, we move on.\footnote{A \textit{rough} description of what happens in a real helium atom is that the two-electron density looks a lot like the 1s-orbital, but slightly more spread out due to electron-electron repulsion. Pauli exclusion principle doesn't change anything in two-electron systems: we have two electrons and two possible spins as well. See also \href{https://twitter.com/lisyarus/status/1187373256178913282?s=20}{here} and \href{https://twitter.com/lisyarus/status/1188908501436960770?s=20}{there}.}
 
+\newpage
+
 \section{Lithium 2+ cation \(\molecule{Li}^{2+}\)}
+
+This is, again, almost the same as hydrogen. Lithium nucleus has charge +3, and the lithium atom has 3 electrons at normal conditions. If we steal two of them, we get the lithium +2 cation, which is described the same way as helium, but with \(Z=3\).
+
+\codeonline{lithium-s.py}
+
+Change the nucleus charge to 3:
+
+\begin{python}
+def equation(basis):
+    ...
+    n = hgto.Nucleus(3.0)
+    ...
+\end{python}
+
+and get something like
+
+\begin{console}
+Energy: [-4.478605460280523, -1.1215897686285095, -0.49885528082305414,
+ 5.2782304665358195, 67.92747569252208]
+\end{console}
+
+Close enough to the true \(-4.5\), \(-1.125\), and \(-0.5\). The orbitals are even closer to the nucleus this time:
+
+\image{lithium-radial-s-3}
+
+Excercise: guess the dependence of orbitals' spread on the value of \(Z\), then look at \href{https://en.wikipedia.org/wiki/Hydrogen-like_atom\#Non-relativistic_wavefunction_and_energy}{wikipedia} one more time and see if you guessed right.\footnote{Hint: look at the exponential term of the radial part of the wavefunction.}
+
+One can proceed with all atoms the same way, but this is starting to get dull. More importantly, these one-electron atoms are rare in nature: it takes more and more energy\footnote{See also \href{https://en.wikipedia.org/wiki/Molar_ionization_energies_of_the_elements}{here}.} to remove all electrons but one from a heavy atom. We haven't seen \textit{chemical bonding} yet --- the time has come.
+
+\newpage
+
 \section{Dihydrogen cation \(\molecule{H}_2^+\)}
 \section{Trihydrogen 2+ cation \(\molecule{H}_3^{2+}\)}
 \section{Helium hydride 2+ cation \(\molecule{HeH}^{2+}\)}
