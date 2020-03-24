@@ -605,19 +605,19 @@ One final note: all that follows assumes the \href{https://en.wikipedia.org/wiki
 
 \section{Hydrogen atom \(\molecule{H}\)}
 
-At last we arrived to an actual chemical problem: the hydrogen atom. The Hamiltonian looks like this:
+At last we arrived to an actual chemical problem: the hydrogen atom. Assuming that the nucleus is at the origin, the Hamiltonian looks like this:
 
 \begin{equation}
-\hat H\psi = -\frac{1}{2} \Delta \psi - \frac{1}{r}\psi
+\hat H\psi = -\frac{1}{2} \Delta \psi - \frac{1}{|r|}\psi
 \end{equation}
 
 Here, 
 
 \begin{itemize}
-\item \(\psi\) is the wavefunction defined on \(\mathbb R^3\) (technically, an element of the space \(L^2(\mathbb R^3)\))
+\item \(\psi\) is a function (the wavefunction) of a three-component vector \(r\)\footnote{\(r\) may be thought of as representing the position of the electron, but care should be taken, for there is no \textit{the} position of an electron due to \href{https://en.wikipedia.org/wiki/Uncertainty_principle}{Heisenberg uncertainty}, and each possible \(r\) has a probability of finding the electron in that particular place.} (technically, an element of the space \(L^2(\mathbb R^3)\))
 \item \(\Delta\) is the \href{https://en.wikipedia.org/wiki/Laplace_operator}{Laplace operator} \(\frac{\partial^2}{\partial x^2}+\frac{\partial^2}{\partial y^2}+\frac{\partial^2}{\partial z^2}\) and accounts for the kinetic energy of an electron
-\item \(r=\sqrt{x^2+y^2+z^2}\) is the distance to origin
-\item \(\frac{1}{r}\) is the \href{https://en.wikipedia.org/wiki/Electric_potential_energy}{Coulomb potential energy} of the attraction between electron (at distance \(r\)) and hydrogen nucleus.
+\item \(|r|=\sqrt{x^2+y^2+z^2}\) is the distance to nucleus
+\item \(-\frac{1}{|r|}\) is the \href{https://en.wikipedia.org/wiki/Electric_potential_energy}{Coulomb potential energy} of the attraction between electron (at distance \(|r|\)) and hydrogen nucleus.
 \end{itemize}
 
 It is one of the few real-world quantum systems with known analytical solutions (see \href{https://en.wikipedia.org/wiki/Hydrogen-like_atom}{here}). The energies are (in atomic units!) \(E_n = -\frac{1}{2n^2}\), where \(n=1,2,3,\dots\) is that number written in front of atomic orbitals like 1s, 2s, 2p, 3s, 3p, 3d, etc. The corresponding wavefunctions look like those \href{https://en.wikipedia.org/wiki/Atomic_orbital}{funny blobs}\footnote{See also \href{https://lisyarus.github.io/webgl/gto.html}{my interactive visualizer}.} from any introductory chemistry textbook.
@@ -942,7 +942,7 @@ You may try getting more sophisticated orbitals (3d, 4d, 4f, ...) with higher \t
 The next one-electron system we are going to explore is the helium +1 cation --- a helium atom that lost one of its two electrons. This one is very similar to the hydrogen atom, the only difference being the nucleus charge. The Hamiltonian changes to
 
 \begin{equation}
-\hat H\psi = -\frac{1}{2} \Delta \psi - \frac{Z}{r}\psi
+\hat H\psi = -\frac{1}{2} \Delta \psi - \frac{Z}{|r|}\psi
 \end{equation}
 
  Look at \href{https://en.wikipedia.org/wiki/Hydrogen-like_atom\#Non-relativistic_wavefunction_and_energy}{wikipedia} again to see what the energies are: \(-\frac{Z^2}{2n^2}\), where \(Z\) is the charge of the nucleus: \(Z=1\) for hydrogen, \(Z=2\) for helium. Thus, we expect the energies to be 4 times the energies for hydrogen.
