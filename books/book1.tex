@@ -833,6 +833,88 @@ for k in range(3):
 
 This plot is my favorite concerning s-orbitals. You can easily see where are those orbitals localized in space, where are the sign changes, etc. The distance of maximal probability for the 1s-orbital is known as \href{https://en.wikipedia.org/wiki/Bohr_radius}{Bohr radius} (in atomic units it is exactly equal to 1).
 
+Let's try some p-orbitals!
+
+\codeonline{hydrogen-p.py}
+
+Hydrogen (and hydrogen-like) orbitals are very special. While s-orbitals are spherically symmetric, p-orbitals are symmetric with respect to rotations around a particular axis and antisymmetric (change sign) upon reflection through that axis. As an example, the p\textsubscript{x}-orbital doesn't change when rotated around the X-axis and flips sign when the X-coordinate changes sign.\footnote{There's much more to it: hydrogen orbitals correspond to irreducible representations of the group \(SO(3)\) of rotations in three dimensions.}
+
+All this, together with basic group representation theory, lets us pick specific basis functions for specific orbitals based on symmetry. We have already used spherically symmetric basis functions for s-orbitals, now we should pick appropriate ones for p-orbitals. Taking HGTO's with \texttt{degree} equal to \texttt{[1,0,0]} seems reasonable: they have the same symmetries as p\textsubscript{x}-orbitals.
+
+Change the \texttt{make\_basis} function to
+
+\begin{python}
+def make_basis(params):
+    basis = []
+
+    for sigma in params:
+        basis.append(hgto.HGTO(sigma, [1,0,0]))
+
+    return basis
+\end{python}
+
+Optimize again for the lowest energy:
+
+\begin{python}
+def target(params):
+    basis = make_basis(params)
+    energy, coeffs = solve(*equation(basis))
+    return energy[0]
+\end{python}
+
+As before, pick some random starting sigmas and optimize:
+
+\begin{python}
+params = optimize(numpy.random.uniform(0.5, 5.0, 5))
+
+basis = make_basis(params)
+energy, coeffs = solve(*equation(basis))
+print("Energy:", list(energy))
+\end{python}
+
+There are no 1p-orbitals, only 2p, 3p, etc. This means that the lowest energy value we should get is \(-0.125\):
+
+\begin{console}
+Energy: [-0.124990568560368, -0.04460409913403034, 0.10989269961085461,
+ 0.7056560089020736, 3.5767938893908897]
+\end{console}
+
+The first value is surprisingly close to the real answer. Let's use the same trick of optimizing the sum of a few first energies to get more orbitals:
+
+\begin{python}
+def target(params):
+    basis = make_basis(params)
+    energy, coeffs = solve(*equation(basis))
+    return sum(energy[0:3])
+\end{python}
+
+\begin{console}
+Energy: [-0.1248431191321489, -0.05541009666729667, -0.031146344230485228,
+ 0.0501113155120981, 0.6710920124828863]
+\end{console}
+
+Again, the precision of each orbital is questionable compared to actual values of \(-0.125\), \(-\frac{1}{18}=-0.0(5)\), and \(-\frac{1}{32}=-0.03125\), but we got three p-orbitals (2p\textsubscript{x}, 3p\textsubscript{x}, and 4p\textsubscript{x}) using only five basis functions! We may plot them along the X axis, as before:
+
+\begin{python}
+L = 30
+N = 1001
+X = numpy.linspace(-L, L, N)
+
+for k in range(3):
+    state = wavefunction(basis, coeffs[:,k], X, 0, 0)
+    pyplot.plot(X, state, label="E = {0:.5f}".format(energy[k]))
+\end{python}
+
+\image{hydrogen-wavefunction-p-3}
+
+We can plot the density, as well:
+
+\image{hydrogen-density-p-3}
+
+Radial density doesn't make much sense in this case, since p-orbitals are not spherically symmetric.
+
+You may try getting more sophisticated orbitals (3d, 4d, 4f, ...) with higher \texttt{degree} of HGTO's, but the basis starts being close to degenerate, and \texttt{numpy.linalg.LinAlgError} appears more and more.\footnote{As I've said before, it is possible to overcome this using SVD, but this is out of the scope of this book.} At this point, we move on to other systems.
+
 \section{Helium cation \(\molecule{He}^+\)} 
 \section{Lithium 2+ cation \(\molecule{Li}^{2+}\)}
 \section{Dihydrogen cation \(\molecule{H}_2^+\)}
