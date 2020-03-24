@@ -4,7 +4,6 @@ import scipy.optimize
 import matplotlib.pyplot as pyplot
 import hgto
 
-import sys
 
 def equation(basis):
 
