@@ -605,7 +605,22 @@ One final note: all that follows assumes the \href{https://en.wikipedia.org/wiki
 
 \section{Hydrogen atom \(\molecule{H}\)}
 
-At last we arrived to an actual chemical problem: the hydrogen atom. It is one of the few real-world quantum systems with known analytical solutions (see \href{https://en.wikipedia.org/wiki/Hydrogen-like_atom}{here}). The energies are (in atomic units!) \(E_n = -\frac{1}{2n^2}\), where \(n=1,2,3,\dots\) is that number written in front of atomic orbitals like 1s, 2s, 2p, 3s, 3p, 3d, etc. The corresponding wavefunctions look like those \href{https://en.wikipedia.org/wiki/Atomic_orbital}{funny blobs}\footnote{See also \href{https://lisyarus.github.io/webgl/gto.html}{my interactive visualizer}.} from any introductory chemistry textbook.
+At last we arrived to an actual chemical problem: the hydrogen atom. The Hamiltonian looks like this:
+
+\begin{equation}
+\hat H\psi = -\frac{1}{2} \Delta \psi + \frac{1}{r}\psi
+\end{equation}
+
+Here, 
+
+\begin{itemize}
+\item \(\psi\) is the wavefunction defined on \(\mathbb R^3\) (technically, an element of the space \(L^2(\mathbb R^3)\))
+\item \(\Delta\) is the \href{https://en.wikipedia.org/wiki/Laplace_operator}{Laplace operator} \(\frac{\partial^2}{\partial x^2}+\frac{\partial^2}{\partial y^2}+\frac{\partial^2}{\partial z^2}\) and accounts for the kinetic energy of an electron
+\item \(r=\sqrt{x^2+y^2+z^2}\) is the distance to origin
+\item \(\frac{1}{r}\) is the \href{https://en.wikipedia.org/wiki/Electric_potential_energy}{Coulomb potential energy} of the attraction between electron (at distance \(r\)) and hydrogen nucleus.
+\end{itemize}
+
+It is one of the few real-world quantum systems with known analytical solutions (see \href{https://en.wikipedia.org/wiki/Hydrogen-like_atom}{here}). The energies are (in atomic units!) \(E_n = -\frac{1}{2n^2}\), where \(n=1,2,3,\dots\) is that number written in front of atomic orbitals like 1s, 2s, 2p, 3s, 3p, 3d, etc. The corresponding wavefunctions look like those \href{https://en.wikipedia.org/wiki/Atomic_orbital}{funny blobs}\footnote{See also \href{https://lisyarus.github.io/webgl/gto.html}{my interactive visualizer}.} from any introductory chemistry textbook.
 
 \codeonline{hydrogen-s.py}
 
