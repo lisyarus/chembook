@@ -4,7 +4,7 @@ PDFLATEX=pdflatex -shell-escape -interaction=nonstopmode -halt-on-error
 
 all: *.pdf
 
-%.pdf: %.tex images/%/*.png
+%.pdf: %.tex images/%/*.png ../.git/refs/heads/master
 	mkdir -p build
 	ls build/images || ln -sv ../images build/images
 	cd build
