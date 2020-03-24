@@ -1010,6 +1010,152 @@ One can proceed with all atoms the same way, but this is starting to get dull. M
 \newpage
 
 \section{Dihydrogen cation \(\molecule{H}_2^+\)}
+
+The nature of chemical bonding is quite a delicate one, even in a system of two protons (that is, two hydrogen nuclei) bonded through a single electron. The conventional argument\footnote{See also \href{https://en.wikipedia.org/wiki/Dihydrogen_cation}{wikipedia}.} states that accumulating electron density between two nuclei lowers the potential energy, thus providing a bond. A more careful analysis uncovers that bonding is achieved via redistribution of energy between kinetic and potential parts\footnote{See \cite{ref:atkins}, section 8.2 \textit{An application: the hydrogen molecule-ion}.}. Luckily, we don't need explanations to throw numbers at linear algebra solvers.
+
+The Hamiltonian for dihydrogen cation (also called the \textit{hydrogen molecular ion}) is
+
+\begin{equation}
+\hat H\psi = -\frac{1}{2} \Delta \psi - \frac{1}{|r-R_1|}\psi - \frac{1}{|r-R_2|}\psi + \frac{1}{|R_1-R_2|}\psi
+\end{equation}
+
+We have a few new terms here:
+
+\begin{itemize}
+\item \(R_1\) is the position of the first nucleus
+\item \(|r-R_1|\) is the distance from electron to the first nucleus
+\item \(-\frac{1}{|r-R_1|}\) is the energy of attraction to the first nucleus
+\item \(R_2\) is the position of the second nucleus
+\item \(|r-R_2|\) is the distance from electron to the second nucleus
+\item \(-\frac{1}{|r-R_2|}\) is the energy of attraction to the second nucleus
+\item \(\frac{1}{|R_1-R_2|}\) is the energy of repulsion between the nuclei
+\end{itemize}
+
+We can reuse the code from previous section just by introducing a second nucleus...where? We can, without loss of generality, assume that both nuclei lay on the X axis, at some distance \(R\) between them. Say, \(R_1 = [-\frac{R}{2}, 0.0, 0.0]\) and \(R_2 = [\frac{R}{2}, 0.0, 0.0]\) (no particular reason for that choice except symmetry). Yet how do we know \(R\)? We could google the bond length\footnote{See \cite{ref:dihydrogen}} to get the value of bit less than \(2\) (in atomic units!), but that wouldn't be fair. Instead, let's optimize the bond length \(R\) the same way we optimize \texttt{sigma}.
+
+\codeonline{dihydrogen.py}
+
+First of all, we cannot simply hardcode the nuclei in \texttt{equation} function now, so make it a function agument, and update the function to handle multiple nuclei:
+
+\begin{python}
+def equation(basis, nuclei):
+
+    B = len(basis)
+
+    H = numpy.zeros((B,B))
+    S = numpy.zeros((B,B))
+
+    total_nuclear_repulsion = 0.0
+    for i in range(len(nuclei)):
+        for j in range(i+1, len(nuclei)):
+            total_nuclear_repulsion += hgto.nuclear_repulsion(nuclei[i],
+                nuclei[j])
+
+    for i in range(B):
+        for j in range(B):
+            bi = basis[i]
+            bj = basis[j]
+            S[i,j] = hgto.overlap(bi, bj)
+            H[i,j] = hgto.kinetic(bi, bj)
+            for n in nuclei:
+                H[i,j] += hgto.nuclear_attraction(bi, bj, n)
+            H[i,j] += S[i,j] * total_nuclear_repulsion
+
+    return (H, S)
+\end{python}
+
+\texttt{hgto.nuclear\_repulsion} is just evaluating the \href{https://en.wikipedia.org/wiki/Electric_potential_energy}{elecrostatic potential energy}, which we sum over all pairs of distinct nuclei. Recall that we consider nuclei to be static \textit{within a single eigenvalue problem}, so the total energy doesn't depend on the chosen basis for one-electron wavefunction. However, the \(H\) matrix is not just the energy, but contains the value of the integral \(\langle H\phi_i, \phi_j\rangle\). Specifically, for the nuclei repulstion term we get
+
+\begin{equation}
+\left\langle \frac{1}{|R_1-R_2|}\phi_i, \phi_j\right\rangle = \int\limits_{\mathbb R^3} \frac{1}{|R_1-R_2|}\phi_i(r)\phi_j(r) dr = \frac{1}{|R_1-R_2|} \int\limits_{\mathbb R^3} \phi_i(r)\phi_j(r) dr = \frac{1}{|R_1-R_2|} \langle\phi_i, \phi_j\rangle
+\end{equation}
+
+(this happens every time when a specific energy term doesn't depend on \(r\)). Thus, we reuse the overlap integral \(\langle\phi_i, \phi_j\rangle\) already computed into \texttt{S[i,j]}.
+
+Next, we need to update the \texttt{make\_basis} function: since the nuclei also depend on the optimized parameters, it would be nice for the function to return both the nuclei and the chosen basis. The first number in the parameters list will be the internuclear distance \(R\), while all the others will be the \texttt{sigma}'s, and for each \texttt{sigma} we'll make two basis functions, each centered on one of the two nuclei:
+
+\begin{python}
+def make_basis(params):
+    R = params[0]
+
+    nuclei = [
+        hgto.Nucleus(1.0, [-R/2, 0.0, 0.0]),
+        hgto.Nucleus(1.0, [ R/2, 0.0, 0.0]),
+    ]
+
+    basis = []
+
+    for sigma in params[1:]:
+        for n in nuclei:
+            basis.append(hgto.HGTO(sigma, origin=n.position))
+
+    return basis, nuclei
+\end{python}
+
+Now we need to update the target function:
+
+\begin{python}
+def target(params):
+    energy, coeffs = solve(*equation(*make_basis(params)))
+    return energy[0]
+\end{python}
+
+And invoke the optimization, starting with a random configuration again:
+
+\begin{python}
+params = optimize(numpy.random.uniform(0.5, 5.0, 5))
+
+basis, nuclei = make_basis(params)
+energy, coeffs = solve(*equation(basis, nuclei))
+print("R:", params[0])
+print("Energy:", list(energy))
+\end{python}
+
+resulting in
+
+\begin{console}
+R: 1.9812752254550632
+Energy: [-0.5904203018386721, -0.158456775787351, 0.41327243101286076,
+ 0.5952619487434113, 3.918972615674728, 3.9258967834545113,
+  29.407028344934997, 29.55225299315845]
+\end{console}
+
+First of all, why did we get 8 values of energy (and 8 eigenstates)? We have 5 parameters, one of which is \(R\), and the other 4 are \texttt{sigma}. Each \texttt{sigma} corresponds to 2 basis functions (one for each nucleus), giving a total of 8 basis functions.
+
+The true values are something close to \(R=1.99\) and \(E=-0.6\), so we are reasonably close. What is the second orbital with energy \(-0.158\)? Before we talk on that, let's plot the two first wavefunctions along the X axis, as usual:
+
+\image{dihydrogen-wavefunction}
+
+and the corresponding densities:
+
+\image{dihydrogen-density}
+
+We can note a few differencies between these states. The state with \(E\approx-0.59\)
+
+\begin{itemize}
+\item Is symmetric with respect to swapping the nuclei, thus called a \textit{gerade}\footnote{This is German for \textit{even}.} state
+\item Has a notable concentration of density between the nuclei
+\item Has energy lower than \(-0.5\)
+\end{itemize}
+
+while the state with \(E\approx-0.16\)
+
+\begin{itemize}
+\item Is antisymmetric with respect to swapping the nuclei, thus called an \textit{ungerade}\footnote{This is German for \textit{odd}.} state
+\item Has low density between the nuclei and spreads a bit further to the sides
+\item Has energy much higher than \(-0.5\).
+\end{itemize}
+
+It seems to be a general phenomenon that the ground state will be as symmetric as it can be\footnote{A proof of a similar statement can be found in \cite{ref:lieb}. See also \href{https://math.stackexchange.com/questions/3564003/if-psi-is-an-eigenvector-of-delta-is-psi-an-eigenvector-as-well}{this math.stackexchange question}.}, emphasizing the difference between the two states.
+
+ How do we know whether these states correspond to something real, occurring in nature? Consider the limit case of \(R \rightarrow \infty\). The repulsion between the nuclei would be negligibly small, and the usual hydrogenic orbitals on the two atoms would be almost non-overlapping (thus having a zero overlap integral, thus be orthogonal). The two lowest energy eigenstates will be the 1s orbital on the first atom and the 1s orbital on the second atom, both having energy \(-0.5\). Due to the variational principle, any state of this system will have energy of at least \(-0.5\). The gerade state of \(H_2^+\), however, has a \textit{lower} energy of \(\approx-0.59\), meaning that this state is more preferable than having two completely separate nuclei. The ungerade state has energy much higher than \(-0.5\), meaning that an ion could not exist long in this state. This is exactly what happens if you try the trick of optimizing for the sum of the first two energy values: two highly separated hydrogen nuclei give a sum of \(-0.5-0.5=-1.0\), while two eigenstates of \(H_2^+\) give a higher value of about \(-0.75\), meaning that optimization would prefer the former, and no ions will be found.
+
+This is a good place for some excercises: try adding more sophisticated basis functions (like p\textsubscript{x}), or just more s-like orbitals, and see if the energy gets better (lower).
+
+What happens if we add another hydrogen atom?
+
+\newpage
+
 \section{Trihydrogen 2+ cation \(\molecule{H}_3^{2+}\)}
 \section{Helium hydride 2+ cation \(\molecule{HeH}^{2+}\)}
 
@@ -1035,6 +1181,10 @@ One can proceed with all atoms the same way, but this is starting to get dull. M
 \bibitem{ref:edmonds}
 	A. R. Edmonds,
 	\textit{Angular Momentum in Quantum Mechanics}
+\bibitem{ref:dihydrogen}
+	S. B. Doma, M. Abu-Shady, F. N. El-Gammal, A. A. Amer,
+	\textit{Ground States of the Hydrogen Molecule and Its Molecular Ion in the Presence of Magnetic Field Using the Variational Monte Carlo Method}
+	\url{https://arxiv.org/pdf/1509.00477.pdf}
 \bibitem{ref:tmpchem}
 	TMP Chem,
 	\url{www.youtube.com/channel/UC3dZQdfv67X49cZkoXWYSwQ}
