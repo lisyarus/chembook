@@ -1164,6 +1164,71 @@ A hydrogen molecule \(H_2\) looks pretty much the same, but the internuclear dis
 
 This is a good place for some excercises: try adding more sophisticated basis functions (like p\textsubscript{x}), or just more s-like orbitals, and see if the energy gets better (lower).
 
+\codeonline{dihydrogen-r.py}
+
+It is also useful to plot the dependence of energy on \(R\). We'll have to tweak the functions a bit, since we don't need to optimize for \(R\) now:
+
+\begin{python}
+def make_basis(R, params):
+    nuclei = [
+        hgto.Nucleus(1.0, [-R/2, 0.0, 0.0]),
+        hgto.Nucleus(1.0, [ R/2, 0.0, 0.0]),
+    ]
+
+    basis = []
+
+    for sigma in params:
+        for n in nuclei:
+            basis.append(hgto.HGTO(sigma, origin=n.position))
+
+    return basis, nuclei
+
+
+def target(R, params):
+    energy, coeffs = solve(*equation(*make_basis(R, params)))
+    return energy[0]
+
+
+def optimize(R, params):
+    result = scipy.optimize.minimize(lambda params: target(R, params), params, method='Nelder-Mead', options={'adaptive': True})
+    if not result.success:
+        raise RuntimeError("Energy minimization failed")
+    return result.x
+\end{python}
+
+(I've removed the callback since it will clutter the output). Now, run the optimization for every \(R\) sampled from some range:
+
+\begin{python}
+R = numpy.linspace(0.5, 5.0, 101)
+E = numpy.zeros(R.shape)
+
+for i in range(len(R)):
+    print("{}/{}".format(i, len(R)))
+    while True:
+        try:
+            params = optimize(R[i], numpy.random.uniform(0.5, 5.0, 3))
+            break
+        except Exception:
+            pass
+
+    basis, nuclei = make_basis(R[i], params)
+    energy, coeffs = solve(*equation(basis, nuclei))
+    
+    E[i] = energy[0]
+\end{python}
+
+Finally, plot it:
+
+\begin{python}
+pyplot.plot(R, E)
+pyplot.grid()
+pyplot.show()
+\end{python}
+
+\image{dihydrogen-r-plot}
+
+We can clearly see that it has a minimum at about \(R\approx 2\), as expected. The \href{https://en.wikipedia.org/wiki/Dihydrogen_cation}{wikipedia article} features a similar plot.
+
 What happens if we add another hydrogen atom?
 
 \newpage
