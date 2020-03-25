@@ -33,6 +33,8 @@
 \usepackage{amsfonts}
 \usepackage{extarrows}
 
+\newcommand{\angstrom}{\textup{\AA}}
+
 \usepackage{bashful}
 
 \usepackage{graphicx}
@@ -59,6 +61,12 @@
 \newcommand{\image}[1]{
 \begin{center}
 \includegraphics[width=\textwidth/2]{#1.png}
+\end{center}
+}
+
+\newcommand{\wideimage}[1]{
+\begin{center}
+\includegraphics[width=\textwidth]{#1.png}
 \end{center}
 }
 
@@ -1161,6 +1169,156 @@ What happens if we add another hydrogen atom?
 \newpage
 
 \section{Trihydrogen 2+ cation \(\molecule{H}_3^{2+}\)}
+
+Let's try the same with three hydrogen nuclei and one electron. This time all our code is already suited to work with an arbitrary number of nuclei, and we only need to change the \texttt{make\_basis} function. We can assume that the first nucleus is located at the origin, the second is somewhere along the X axis at \([X_2,0,0]\), and the third nucleus is somewhere on the XY-plane at \([X_3,Y_3,0]\). To optimize for this, we need to include \(X_2\), \(X_3\), and \(Y_3\) to the optimized parameters:
+
+\begin{python}
+def make_basis(params):
+    X2 = params[0]
+    X3 = params[1]
+    Y3 = params[2]
+
+    nuclei = [
+        hgto.Nucleus(1.0, [0.0, 0.0, 0.0]),
+        hgto.Nucleus(1.0, [X2, 0.0, 0.0]),
+        hgto.Nucleus(1.0, [X3, Y3, 0.0]),
+    ]
+
+    basis = []
+
+    for sigma in params[3:]:
+        for n in nuclei:
+            basis.append(hgto.HGTO(sigma, origin=n.position))
+
+    return basis, nuclei
+\end{python}
+
+Now, do the usual optimization. You won't get anything useful, though, for the optimization will always fail, either trying to separate all three nuclei (both \(X_2\) and \(\max(X_3,Y_3)\) growing rapidly), or try to separate one of the nuclei from two others and build up a dihydrogen cation \(H_2^+\) on the latter (you will notice this by either \(|X_2|\) or \(\sqrt{X_3^2+Y_3^2}\) equal to \(\approx 1.99\)).
+
+It turns out that there is no such thing as trihydrogen 2+ cation \(H_3^{2+}\). No matter what, a single electron cannot bind three hydrogen nuclei together. The \href{https://en.wikipedia.org/wiki/Trihydrogen_cation}{real trihydrogen cation} \(H_3^+\) has two electrons, and is beyond the scope for now.
+
+We can, however, try to do something at least slightly useful. Basic chemistry build up on the idea\footnote{I never liked it, since it completely ignores electron-electron repulsion and, probably even more importantly, ignores that a multi-electron wavefunction is \textbf{not} simply composed of independent single-electron wavefunctions, but is an element of a tensor product space of several single-electron Hilbert spaces. Nevertheless, this simplistic point of view provides a useful, if not always correct, mental model for chemists, which is a feature of extreme value.} that electrons independently occupy single-electron orbitals in pairs\footnote{Because of Pauli principle and having two possible spins.}. So, if we arrange the nuclei the way they exist in \(H_3^+\) and don't let them move, we will get a one-electron approximation to what really happens in this cation.
+
+Looking at the \href{https://en.wikipedia.org/wiki/Trihydrogen_cation}{wikipedia article}, we see that the trihydrogen 1+ cation is an equilateral triangle with side equal to \(0.9\angstrom\)\footnote{This is the \href{https://en.wikipedia.org/wiki/Angstrom}{angstrom} unit of distance equal to \(1\angstrom=10^{-10} m\).}, which is about \(1.7\) in atomic units. Let us arrange the nuclei so that the center of this triangle is at the origin (again, for purely aesthetic reasons), the first nucleus is along the X axis, and two others are obtained by rotating \(120^\circ\) and \(240^\circ\):
+
+\begin{python}
+def make_basis(params):
+    A = 1.7
+    R = A / numpy.sqrt(3.0)
+
+    nuclei = [
+        hgto.Nucleus(1.0, [   R,  0.0, 0.0]),
+        hgto.Nucleus(1.0, [-R/2,  A/2, 0.0]),
+        hgto.Nucleus(1.0, [-R/2, -A/2, 0.0]),
+    ]
+
+    basis = []
+
+    for sigma in params:
+        for n in nuclei:
+            basis.append(hgto.HGTO(sigma, origin=n.position))
+
+    return basis, nuclei
+\end{python}
+
+and call the optimization:
+
+\begin{python}
+params = optimize(numpy.random.uniform(0.5, 5.0, 3))
+
+basis, nuclei = make_basis(params)
+energy, coeffs = solve(*equation(basis, nuclei))
+print("Energy:", list(energy))
+\end{python}
+
+(decreasing the number of parameters to 3 so that it goes a little faster). I got this:
+
+\begin{console}
+Energy: [-0.10152107345559061, 0.6528801984407289, 0.6528801984407303,
+ 1.3377309465627292, 1.6843031987455306, 1.6843031987455341, ...]
+\end{console}
+
+We got the ground-state energy of about \(-0.1\) (in atomic units!). The energy of nuclear repulsion here is about \(1.76\) (excercise: get this number yourself), so the pure one-electron energy (ignoring nuclei repulsion) is about \(-1.86\). If there were two electrons, like in a real \(H_3^+\), together they would have the energy of \(-1.86-1.86=-3.72\). Adding the nuclei repulsion back, we get the total energy of the \(H_3^+\) cation of \(-3.72+1.76=-1.96\). The actual energy will, of course, be a lot higher (about \(-0.34\), though I might be incorrect here) due to electron-electron repulsion.
+
+What if the \(H_3^+\) cation gets another electron? It will become the \href{https://en.wikipedia.org/wiki/Triatomic_hydrogen}{triatomic hydrogen} molecule, although a very unstable one. It quickly decomposes, leading to a reaction
+
+\begin{equation}
+H_3^+ + e^- \rightarrow H_3 \rightarrow H_2 + H
+\end{equation}
+
+which happens a lot in the interstellar medium. In fact, the \(H_3^+\) ion is one of the most abundant ions in the universe!
+
+We have already seen that the ground state of a chemical system tends to be highly symmetric. The most symmetric function in our case would be the one that doesn't change upon any permutation of the three nuclei. Let us plot\footnote{A simpler yet boring way to see this is to inspect the coefficients of the wavefunction.} the ground state we've found to confirm this. Plotting along the X axis if pretty useless now, since the molecule is not linear\footnote{Does not lie on a straight line.}, so we'll have to use 2D image plots and plot the XY-plane cross-section of the wavefunction:
+
+\begin{python}
+L = 3
+N = 101
+X = numpy.linspace(-L, L, N)
+Y = numpy.linspace(-L, L, N)
+
+X, Y = numpy.meshgrid(X, Y)
+
+state = wavefunction(basis, coeffs[:,k], X, Y, 0)
+pyplot.imshow(state)
+
+pyplot.grid()
+pyplot.show()
+\end{python}
+
+\image{trihydrogen-2d-wavefunction}
+
+(Remember that you might get the opposite colors --- a negated wavefunction represents the same state). We can clearly see that the wavefunction is concentrated the same way around each nucleus.
+
+Before we move on, let's have a look at the next two energy levels (with energy of \(\approx 0.65\)). We've ignored positive-energy states up to now, since having positive energy means that it would be more energy-efficient to tear all particles apart and move them away from each other, reducing energy to zero. However, these two states are interesting from a mathematical perspective. Let's plot their cross-sections alongside the ground state:
+
+\begin{python}
+figure = pyplot.figure()
+for k in range(3):
+    state = wavefunction(basis, coeffs[:,k], X, Y, 0)
+    figure.add_subplot(1, 3, k+1)
+    pyplot.imshow(state, vmin=-0.4, vmax=0.4)
+	pyplot.grid()
+
+pyplot.show()
+\end{python}
+
+I am setting the possible range of values \texttt{vmin..vmax} to something fixed so that all three images have the same value to color matching.
+
+\wideimage{trihydrogen-2d-3}
+
+The two wavefunctions on the right look pretty much the same, one being a rotated and/or reflected version of the other\footnote{See also \href{https://twitter.com/lisyarus/status/1099620329612365824}{my tweet} with an alternative visualization.}. What is interesting about them is that if we take the coefficients of one of these states corresponding to three basis functions with the same \texttt{sigma} and sum these three numbers, we get a zero. Let's check this:
+
+\begin{python}
+for k in [1,2]:
+    c = coeffs[:,k]
+    for i in range(len(params)):
+        print(sum(c[3*i:3*i+3]))
+\end{python}
+
+Recall that \texttt{params} are the values of \texttt{sigma}, and each \texttt{sigma} corresponds to three consecutive basis functions, thus the summation from \texttt{3*i} to \texttt{3*i+3} (exclusive on the end). You should get something along
+
+\begin{console}
+-5.828670879282072e-16
+1.887379141862766e-15
+8.465450562766819e-16
+2.7755575615628914e-16
+-5.551115123125783e-16
+3.3306690738754696e-16
+\end{console}
+
+These are within a numerical error from zero\footnote{Curiously enough, the \href{https://en.wikipedia.org/wiki/Machine_epsilon}{machine epsilon} for double precision floating point is about \(10^{-16}\).}. Clearly something's happening here.
+
+Welcome to the miraculous and frightening world of representation theory! This is an enormous beautiful part of mathematics that is concerned with viewing any object (e.g. elements of some group) as linear operators on some vector space, and trying to squeeze as much information as possible, with applications from coding theory\footnote{Fourier series and Fourier transform, both continuous and discrete, are instances of representation theory of groups \(\mathbb T \cong \mathbb R / \mathbb Z\), \(\mathbb R\), and \(C_n \cong \mathbb Z / n \mathbb Z\).} to particle physics\footnote{Physicists love the mantra that elementary particles are the irreducible representations of the \href{https://en.wikipedia.org/wiki/Poincar\%C3\%A9_group}{Poincare group}, see \href{https://physics.stackexchange.com/questions/277986/why-particles-are-thought-as-irreducible-representation-in-plain-english}{here}.}. In our case, the groups is \(S_3\) --- the group of permutations of three objects (the three nuclei). The system is clearly invariant under the action of this group (since there are three exactly identical nuclei sitting on the vertices of an equilateral triangle), so representation theory tells us that the eigenstates should be \textit{irreducible representations} of this group. Now, mathematics tells us that there are two irreducible representations of this group:
+
+\begin{itemize}
+\item The one-dimensional \textit{trivial} representation, which is completely invariant under group action --- the ground state,
+\item The two-dimensional \textit{standard} representation, with coefficients that sum to zero --- the \(k=1\) and \(k=2\) states.
+\end{itemize}
+
+So, representation theory can predict certain properties of chemical species simply by looking at the symmetry groups. In fact, most chemists learn representation theory as part of their curriculum. For a chemical overview on the subject, see \cite{ref:atkins}. For a deep dive in, see \cite{ref:fulton-harris}.
+
+\newpage
+
 \section{Helium hydride 2+ cation \(\molecule{HeH}^{2+}\)}
 
 \begin{thebibliography}{9}
