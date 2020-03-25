@@ -1017,7 +1017,7 @@ One can proceed with all atoms the same way, but this is starting to get dull. M
 
 \newpage
 
-\section{Dihydrogen cation \(\molecule{H}_2^+\)}
+\section{Dihydrogen cation \(\molecule{H}_2^+\)} \label{sec:dihydrogen}
 
 The nature of chemical bonding is quite a delicate one, even in a system of two protons (that is, two hydrogen nuclei) bonded through a single electron. The conventional argument\footnote{See also \href{https://en.wikipedia.org/wiki/Dihydrogen_cation}{wikipedia}.} states that accumulating electron density between two nuclei lowers the potential energy, thus providing a bond. A more careful analysis uncovers that bonding is achieved via redistribution of energy between kinetic and potential parts\footnote{See \cite{ref:atkins}, section 8.2 \textit{An application: the hydrogen molecule-ion}.}. Luckily, we don't need explanations to throw numbers at linear algebra solvers.
 
@@ -1385,6 +1385,82 @@ So, representation theory can predict certain properties of chemical species sim
 \newpage
 
 \section{Helium hydride 2+ cation \(\molecule{HeH}^{2+}\)}
+
+At this point you might already suspect that the helium hydride 2+ cation \(HeH^{2+}\) is not a thing either, while the \href{https://en.wikipedia.org/wiki/Helium_hydride_ion}{1+ cation} \(HeH^+\) (having two electrons) is. Let us check all that as well.
+
+Put the helium and hydrogen atoms symmetrically on the X axis. This time there are no reasons to expect any symmetry between the two atoms, so we'll have two separate sets of \texttt{sigma}'s, one for each atom:
+
+\begin{python}
+def make_basis(params):
+    R = params[0]
+
+    nuclei = [
+        hgto.Nucleus(2.0, [-R/2, 0.0, 0.0]),
+        hgto.Nucleus(1.0, [ R/2, 0.0, 0.0]),
+    ]
+
+    N = len(params) // 2
+
+    sigma_He = params[1:N]
+    sigma_H = params[N:]
+
+    basis = []
+
+    for sigma in sigma_He:
+        basis.append(hgto.HGTO(sigma, origin=nuclei[0].position))
+
+    for sigma in sigma_H:
+        basis.append(hgto.HGTO(sigma, origin=nuclei[1].position))
+
+    return basis, nuclei
+\end{python}
+
+This won't get us anywhere, for there is indeed no such thing as \(HeH^{2+}\). We could instead take \(R=0.772\angstrom=1.459\) from the \(HeH^+\) cation and look at the orbitals:
+
+\begin{python}
+def make_basis(params):
+    R = 1.459
+
+    nuclei = [
+        hgto.Nucleus(2.0, [-R/2, 0.0, 0.0]),
+        hgto.Nucleus(1.0, [ R/2, 0.0, 0.0]),
+    ]
+
+    N = len(params) // 2
+
+    sigma_He = params[0:N]
+    sigma_H = params[N:]
+
+    basis = []
+
+    for sigma in sigma_He:
+        basis.append(hgto.HGTO(sigma, origin=nuclei[0].position))
+
+    for sigma in sigma_H:
+        basis.append(hgto.HGTO(sigma, origin=nuclei[1].position))
+
+    return basis, nuclei
+\end{python}
+
+\begin{console}
+Energy: [-1.291834165736075, 0.08084412988221856, 1.191697875250631, ...]
+\end{console}
+
+We can plot the ground state now:
+
+\image{helium-hydride-wavefunction}
+
+The wavefunction is mostly concentrated around the helium atom as expected (since it has twice the charge). As in the \nameref{sec:dihydrogen} section, we can plot the dependence of energy on the internuclear distance.
+
+\codeonline{helium-hydride-r.py}
+
+\image{helium-hydride-r}
+
+There is no clear minimum (except for that tiny bump at \(R\approx 0.7\) that stems from our method imprefections), which confirms that this \(HeH^{2+}\) ion is non-existing.
+
+There isn't much else we can do at this point. Most chemical systems have a lot more than just a single electron. While one-electron orbitals are nice to look at, they are an extremely crude approximation to what is really going on in multi-electron systems. If this gets enough feedback, I will write a text on two-electron, and then multi-electron systems. As for now, I hope you've learnt something from this book.
+
+\newpage
 
 \begin{thebibliography}{9}
 \bibitem{ref:atkins}
