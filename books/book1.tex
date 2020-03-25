@@ -736,7 +736,7 @@ positive definite. The factorization of 'b' could not be completed and
 no eigenvalues or eigenvectors were computed.
 \end{console}
 
-This comes from the Cholesky decomposition that is invoked as part of \texttt{scipy.linalg.eigh} and means that the basis that we supplied is too close to being linearly dependent. This can be fixed using singular value decomposition and restricting to a better subbasis.
+This comes from the Cholesky decomposition that is invoked as part of \texttt{scipy.linalg.eigh} and means that the basis that we supplied is too close to being linearly dependent, --- in particular, if two of the \texttt{sigma} are too close to each other. You might note that the error pops up a lot when the \texttt{sigma} become negative: due to numerical errors having \(\sigma_1\approx-\sigma_2\) leads to erroneously low values of energy, while the corresponding basis functions are almost the same (since only \(\sigma^2\) is involved in the formulas). It would be better to use constrained optimization (to require \(\sigma > 0\)), or use singular value decomposition and restrict to a better-behaving subbasis.
 
 It is however much easier to just call the script again in hope that this time the random initial parameters would be better, or even wrap the \texttt{optimize} routine with a loop that starts over and over again until the optimization succeeds without an exception. In any case, you should get something like this:
 
