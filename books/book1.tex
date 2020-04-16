@@ -1675,6 +1675,14 @@ We will also need the well-known \href{https://en.wikipedia.org/wiki/Gaussian_in
 \int\limits_{-\infty}^\infty \exp\left[-\left(\frac{x-a}{b}\right)^2\right]dx = b\sqrt\pi
 \end{equation}
 
+and a slightly different form of it:
+
+\begin{equation} \label{eq:gaussian-shift}
+\int\limits_{-\infty}^\infty \exp\left[-ax^2-bx\right]dx = \int\limits_{-\infty}^\infty \exp\left[-a\left(x-\frac{b}{2a}\right)^2+\frac{b^2}{4a}\right]dx =  \\
+= \sqrt{\frac{\pi}{a}}\exp{\frac{b^2}{4a}}
+\end{equation}
+
+
 \subsection{Overlap integral}
 
 We are ready to compute the overlap integral of two HGTO's:
@@ -1752,6 +1760,132 @@ so that the integral in question reduces to
 which is again an overlap integral, multiplied by a constant.
 
 So, the kinetic integral is \begin{math}-\frac{1}{2}\end{math} times a sum of three terms \eqref{eq:hgto-kinetic-1}, each being a product of three overlap integrals \eqref{eq:hgto-kinetic-2}: two integrals being the same as in \eqref{eq:hgto-overlap} and one \eqref{eq:hgto-kinetic-3} having a 2+ higher degree and a \begin{math}\sigma^{-2}\end{math} factor.
+
+\subsection{Nuclear attraction integral}
+
+The nuclear attraction integral corresponding to a nucleus of charge \(Z\) at position \(R_0\) is
+
+\begin{equation} \label{eq:hgto-nuc-attr-1}
+\langle \phi_{R_1,\sigma_1,n_1}, -\frac{Z}{|r-R_0|}\phi_{R_2,\sigma_2,n_2} \rangle = -Z \int\limits_{\mathbb{R}^3} \phi_{R_1,\sigma_1,n_1}(x,y,z) \frac{1}{|r-R_0|}\phi_{R_2,\sigma_2,n_2}(x,y,z) dxdydz 
+\end{equation}
+
+Here, \(r\) is the vector \((x, y, z)\).
+
+This integral doesn't split in such an easy way. We start with the same trick \eqref{eq:hgto-param} of using differentiation to get rid of Hermite polynomials:
+
+\begin{equation}
+\begin{gathered}
+\eqref{eq:hgto-nuc-attr-1} = -Z \sigma_1^{n_{1x} + n_{1y} + n_{1z}} \sigma_2^{n_{2x} + n_{2y} + n_{2z}} 
+\frac{d^{n_{1x}}}{dR_{1x}^{n_{1x}}} \frac{d^{n_{1y}}}{dR_{1y}^{n_{1y}}} \frac{d^{n_{1z}}}{dR_{1z}^{n_{1z}}}
+\frac{d^{n_{2x}}}{dR_{2x}^{n_{2x}}} \frac{d^{n_{2y}}}{dR_{2y}^{n_{2y}}} \frac{d^{n_{2z}}}{dR_{2z}^{n_{2z}}} \\
+\int\limits_{\mathbb{R}^3} \exp\left[ -\left(\frac{r - R_1}{\sigma_1}\right)^2\right] \exp\left[ -\left(\frac{r - R_2}{\sigma_2}\right)^2\right] \frac{1}{|r - R_0|} dxdydz
+\end{gathered}
+\end{equation}
+
+(here, squaring a vector like \((r-R_1)^2\) should be understood in terms of dot product).
+
+Retaining sanity at this point poses considerable difficulties. We concentrate on the integral first, analyze the resulting expression as a function of \(R_1, R_2\), and discuss how one can compute this 6 nested higher-order derivatives.
+
+To make the \(\frac{1}{|r-R_0|}\) term more manageable, we use the Gaussian integral \eqref{eq:gaussian} in reverse, introducing a dummy variable \(u\):
+
+\begin{equation}
+\frac{1}{|r-R_0|} = \frac{1}{\sqrt\pi} \int\limits_{-\infty}^\infty \exp\left[-u^2\cdot (r-R_0)^2\right]du
+\end{equation}
+
+This way we get
+
+\begin{equation} \label{eq:hgto-nuc-attr-2}
+\begin{gathered}
+\int\limits_{\mathbb{R}^3} \exp\left[ -\left(\frac{r - R_1}{\sigma_1}\right)^2\right] \exp\left[ -\left(\frac{r - R_2}{\sigma_2}\right)^2\right] \frac{1}{|r - R_0|} dxdydz = \\
+\frac{1}{\sqrt\pi} \int\limits_{\mathbb{R}^4} \exp\left[ -\left(\frac{r - R_1}{\sigma_1}\right)^2 -\left(\frac{r - R_2}{\sigma_2}\right)^2 - u^2\cdot (r-R_0)^2\right] dxdydzdu
+\end{gathered}
+\end{equation}
+
+Note that each term inside the exponential is actually a dot product, thus consists of three terms, e.g. \((r-R_1)^2\) really is \((x-R_{1x})^2+(y-R_{1y})^2+(z-R_{1z})^2\), etc.
+
+Use the Gaussian product theorem \eqref{eq:gaussian-prod} to reduce the number of terms:
+
+\begin{equation} \label{eq:hgto-nuc-attr-3}
+\begin{gathered}
+\eqref{eq:hgto-nuc-attr-2} = \frac{1}{\sqrt\pi} \exp\left[-\frac{(R_1-R_2)^2}{\sigma_1^2 + \sigma_2^2}\right] \int\limits_{\mathbb{R}^4}
+\exp\left[-\left(\frac{r-A}{\Sigma}\right)^2 - u^2\cdot (r-R_0)^2\right] dxdydzdu
+\end{gathered}
+\end{equation}
+
+Here, \(\Sigma = \left(\frac{\sigma_1^2\sigma_2^2}{\sigma_1^2+\sigma_2^2}\right)^\frac{1}{2}\) as before, and \(A\) is a vector with coordinates
+
+\begin{equation}
+A_i = \left(\frac{R_{1i}}{\sigma_1^2}+\frac{R_{2i}}{\sigma_2^2}\right)\Sigma^2
+\end{equation}
+
+with \(i \in \{x,y,z\}\). Note that \(A\) depends linearly on \(R_1\) and \(R_2\), which will help us with differentiation later.
+
+Denote
+
+\begin{equation}
+N = \frac{1}{\sqrt\pi} \exp\left[-\frac{(R_1-R_2)^2}{\sigma_1^2 + \sigma_2^2}\right]
+\end{equation}
+
+and gather everything that depends on \(r\) together:
+
+\begin{equation} \label{eq:hgto-nuc-attr-4}
+\begin{gathered}
+\eqref{eq:hgto-nuc-attr-3} = N \int\limits_{\mathbb{R}^4} \exp\left[-\left(\frac{r-A}{\Sigma}\right)^2 - u^2\cdot (r-R_0)^2\right] dxdydzdu = \\
+= N \int\limits_{\mathbb{R}^4} \exp\left[ -\frac{r^2}{\Sigma^2} + 2\frac{r\cdot A}{\Sigma^2} - \frac{A^2}{\Sigma^2} - u^2r^2 + 2u^2(r\cdot R_0) - u^2 R_0^2\right] dxdydzdu = \\
+= N \int\limits_{\mathbb{R}} \exp\left[ - \frac{A^2}{\Sigma^2}  - u^2 R_0^2 \right] \left[ \int\limits_{\mathbb{R}^3} \exp\left[ -\left(\Sigma^{-2} + u^2\right)r^2 - 2\left( A \Sigma^{-2} + R_0 u^2 \right)\cdot r \right]  dxdydz\right] du \equalby{eq:gaussian-shift} \\
+= N \int\limits_{\mathbb{R}} \exp\left[ - \frac{A^2}{\Sigma^2}  - u^2 R_0^2 \right] \left[  \sqrt{\frac{\pi}{\Sigma^{-2} + u^2}}^3 \exp\left[ \frac{(A \Sigma^{-2} + R_0 u^2)^2}{\Sigma^{-2} + u^2} \right] \right] du = \\
+= N \sqrt{\pi}^3 \int\limits_{\mathbb{R}} (\Sigma^{-2} + u^2)^{-\frac{3}{2}} \exp\left[ - \frac{A^2}{\Sigma^2}  - u^2 R_0^2 + \frac{(A \Sigma^{-2} + R_0 u^2)^2}{\Sigma^{-2} + u^2} \right] du
+\end{gathered}
+\end{equation}
+
+Lets rearrange the expression inside the exponential:
+
+\begin{equation} \label{eq:hgto-nuc-attr-5}
+\begin{gathered}
+- \frac{A^2}{\Sigma^2}  - u^2 R_0^2 + \frac{(A \Sigma^{-2} + R_0 u^2)^2}{\Sigma^{-2} + u^2} = \frac{(-A^2\Sigma^{-2}  -  R_0^2u^2)(\Sigma^{-2} + u^2) + (A \Sigma^{-2} + R_0 u^2)^2}{\Sigma^{-2} + u^2} = \\
+= \frac{{\color{red}-A^2\Sigma^{-4}} - A^2\Sigma^{-2}u^2 -R_0^2\Sigma^{-2}u^2 {\color{red}- R_0^2u^4 + A^2\Sigma^{-4}} + 2(A\cdot R_0)\Sigma^{-2}u^2 {\color{red}+ R_0^2u^4} }{\Sigma^{-2} + u^2} = \\
+= \frac{- A^2\Sigma^{-2}u^2 -R_0^2\Sigma^{-2}u^2 + 2(A\cdot R_0)\Sigma^{-2}u^2 }{\Sigma^{-2} + u^2} = \frac{\Sigma^{-2}u^2}{\Sigma^{-2} + u^2} (-A^2 - R_0^2 + 2(A\cdot R_0)) = \\
+= - (\Sigma^2 + u^{-2})^{-1} (A-R_0)^2
+\end{gathered}
+\end{equation}
+
+Take a break here and admire how nicely did it simplify.
+
+We now have
+
+\begin{equation} \label{eq:hgto-nuc-attr-6}
+\eqref{eq:hgto-nuc-attr-4} = N \sqrt{\pi}^3 \int\limits_{\mathbb{R}} (\Sigma^{-2} + u^2)^{-\frac{3}{2}} \exp\left[ - (\Sigma^2 + u^{-2})^{-1} (A-R_0)^2 \right] du
+\end{equation}
+
+Perform a change of variables
+
+\begin{equation}
+\begin{gathered}
+t = u(\Sigma^{-2} + u^2)^{-\frac{1}{2}} \\
+dt = (\Sigma^{-2} + u^2)^{-\frac{1}{2}} du - u \frac{1}{2} (\Sigma^{-2} + u^2)^{-\frac{3}{2}} 2u du =
+(\Sigma^{-2} + u^2) (\Sigma^{-2} + u^2)^{-\frac{3}{2}} du - u^2 (\Sigma^{-2} + u^2)^{-\frac{3}{2}} du = \\
+= \Sigma^{-2} (\Sigma^{-2} + u^2)^{-\frac{3}{2}} du
+\end{gathered}
+\end{equation}
+
+so that
+
+\begin{equation}
+\begin{gathered}
+\Sigma^{-2} t^2  = \Sigma^{-2}u^2 (\Sigma^{-2} + u^2)^{-1} = \left(\frac{\Sigma^{-2} + u^2}{\Sigma^{-2}u^2}\right)^{-1} = (\Sigma^2+u^{-2})^{-1} \\
+\Sigma^2 dt = (\Sigma^{-2} + u^2)^{-\frac{3}{2}} du
+\end{gathered}
+\end{equation}
+
+Substituting, we obtain
+
+\begin{equation}
+\begin{gathered}
+\eqref{eq:hgto-nuc-attr-6} = N \sqrt{\pi}^3 \Sigma^2 \int\limits_{-1}^1 \exp\left[ - t^2 \left(\frac{A-R_0}{\Sigma}\right)^2 \right] dt
+\end{gathered}
+\end{equation}
+
+Recall that both \(N\) and \(A\) depend linearly on \(R_1\) and \(R_2\).
 
 \end{appendices}
 
