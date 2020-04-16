@@ -1706,6 +1706,48 @@ Next, use \eqref{eq:gaussian-prod}
 
 This is the final formula for the overlap integral of two 1D HGTO's. The integral for 3D functions is the product of three 1D integrals \eqref{eq:hgto-overlap-2}. Everything here is just arithmetic, except square roots and exponentials, which can be computed using standard routines in most programming languages, and Hermite polynomials, which can be computed using \eqref{eq:hermite-rec}.
 
+\subsection{Kinetic integral}
+
+The kinetic integral, representing the kinetic energy, is
+
+\begin{equation} \label{eq:hgto-kinetic-1}
+\begin{gathered}
+\langle \phi_{R_1,\sigma_1,n_1}, -\frac{1}{2}\Delta\phi_{R_2,\sigma_2,n_2} \rangle = -\frac{1}{2} \int\limits_{\mathbb{R}^3} \phi_{R_1,\sigma_1,n_1}(x,y,z) \Delta\phi_{R_2,\sigma_2,n_2}(x,y,z) dxdydz = \\
+= -\frac{1}{2} \int\limits_{\mathbb{R}^3} \phi_{R_1,\sigma_1,n_1}(x,y,z) \left(\frac{\partial^2}{\partial x^2}+\frac{\partial^2}{\partial y^2}+\frac{\partial^2}{\partial z^2}\right)\phi_{R_2,\sigma_2,n_2}(x,y,z) dxdydz = \\
+= -\frac{1}{2} \int\limits_{\mathbb{R}^3} \phi_{R_1,\sigma_1,n_1}(x,y,z) \frac{\partial^2}{\partial x^2} \phi_{R_2,\sigma_2,n_2}(x,y,z) dxdydz - \frac{1}{2}\int\dots dy - \frac{1}{2}\int\dots dz
+\end{gathered}
+\end{equation}
+
+We now focus on the first integral (the one with \begin{math}\frac{\partial^2}{\partial x^2}\end{math}), the other two can be computed in a similar way. We also drop the \begin{math}-\frac{1}{2}\end{math} factor in what follows.
+
+\begin{equation} \label{eq:hgto-kinetic-2}
+\begin{gathered}
+\int\limits_{\mathbb{R}^3} \phi_{R_1,\sigma_1,n_1}(x,y,z) \frac{\partial^2}{\partial x^2} \phi_{R_2,\sigma_2,n_2}(x,y,z) dxdydz \equalby{eq:hgto-decomposition-1d} \\
+\left[\int\limits_{-\infty}^\infty \phi_{R_{1x},\sigma_1,n_{1x}}(x)\frac{\partial^2}{\partial x^2}\phi_{R_{2x},\sigma_2,n_{2x}}(x) dx\right] \cdot
+\left[\int\limits_{-\infty}^\infty \phi_{R_{1y},\sigma_1,n_{1y}}(y)\phi_{R_{2y},\sigma_2,n_{2y}}(y) dy\right] \cdot
+\left[\int\limits_{-\infty}^\infty \phi_{R_{1z},\sigma_1,n_{1z}}(z)\phi_{R_{2z},\sigma_2,n_{2z}}(z) dz\right]
+\end{gathered}
+\end{equation}
+
+Note that the integrals over \begin{math}y\end{math} and \begin{math}z\end{math} are just 1D overlap integrals computed earlier \eqref{eq:hgto-overlap}, so we are left to deal with the first term.
+
+Exploiting again the handy properties of Hermite polynomials, we get
+
+\begin{equation}
+\frac{d^2}{dx^2}\phi_{R,\sigma,n}(x) \equalby{eq:hgto-param} \sigma^n\frac{d^2}{dx^2}\frac{d^n}{dR^n}e^{-\left(\frac{x-R}{\sigma}\right)^2} \equalby{eq:gaussian-der-hermite-3} \\
+= \sigma^{-2} H_{n+2}\left(\frac{x-R}{\sigma}\right) e^{-\left(\frac{x-R}{\sigma}\right)^2} \equalby{eq:hgto-param} \sigma^{-2}\phi_{R,\sigma,n+2}(x)
+\end{equation}
+
+so that the integral in question reduces to
+
+\begin{equation} \label{eq:hgto-kinetic-3}
+\int\limits_{-\infty}^\infty \phi_{R_{1x},\sigma_1,n_{1x}}(x)\frac{\partial^2}{\partial x^2}\phi_{R_{2x},\sigma_2,n_{2x}}(x) dx = \sigma_{2x}^{-2} \int\limits_{-\infty}^\infty \phi_{R_{1x},\sigma_1,n_{1x}}(x)\phi_{R_{2x},\sigma_2,n_{2x}+2}(x) dx
+\end{equation}
+
+which is again an overlap integral, multiplied by a constant.
+
+So, the kinetic integral is \begin{math}-\frac{1}{2}\end{math} times a sum of three terms \eqref{eq:hgto-kinetic-1}, each being a product of three overlap integrals \eqref{eq:hgto-kinetic-2}: two integrals being the same as in \eqref{eq:hgto-overlap} and one \eqref{eq:hgto-kinetic-3} having a 2+ higher degree and a \begin{math}\sigma^{-2}\end{math} factor.
+
 \end{appendices}
 
 \end{document}
