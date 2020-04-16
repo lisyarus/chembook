@@ -1697,7 +1697,7 @@ Next, use \eqref{eq:gaussian-prod}
 
 \begin{equation} \label{eq:hgto-overlap}
 \begin{gathered}
-\eqref{eq:hgto-overlap-3} = \sigma_1^{n_1}\sigma_2^{n_2} \frac{d^{n_1}}{dR_1^{n_1}} \frac{d^{n_2}}{dR_2^{n_2}} \int\limits_{-\infty}^\infty \exp\left[-\left(\frac{x-A}{\Sigma}\right)^2\right]\exp\left[-\frac{(R_1-R_2)^2}{\sigma_1^2 + \sigma_2^2}\right] dx = \\
+\eqref{eq:hgto-overlap-3} = \sigma_1^{n_1}\sigma_2^{n_2} \frac{d^{n_1}}{dR_1^{n_1}} \frac{d^{n_2}}{dR_2^{n_2}} \int\limits_{-\infty}^\infty \exp\left[-\left(\frac{x-A}{\Sigma}\right)^2\right]\exp\left[-\frac{(R_1-R_2)^2}{\sigma_1^2 + \sigma_2^2}\right] dx \equalby{eq:gaussian-prod} \\
 = \sigma_1^{n_1}\sigma_2^{n_2} \cdot \left[ \frac{d^{n_1}}{dR_1^{n_1}} \frac{d^{n_2}}{dR_2^{n_2}} \exp\left[-\frac{(R_1-R_2)^2}{\sigma_1^2 + \sigma_2^2}\right] \right] \cdot \int\limits_{-\infty}^\infty \exp\left[-\left(\frac{x-A}{\Sigma}\right)^2\right] dx \equalby{eq:gaussian} \\
 = \sigma_1^{n_1}\sigma_2^{n_2} \Sigma \sqrt\pi \cdot \left[ \frac{d^{n_1}}{dR_1^{n_1}} \frac{d^{n_2}}{dR_2^{n_2}} \exp\left[-\left(\frac{R_1-R_2}{\sqrt{\sigma_1^2 + \sigma_2^2}}\right)^2\right] \right] \equalby{eq:gaussian-der-hermite-2} \\
 = \sigma_1^{n_1}\sigma_2^{n_2} \Sigma \sqrt\pi (-1)^{n_1} (\sigma_1^2+\sigma_2^2)^{-\frac{n_1+n_2}{2}} H_{n_1+n_2}\left(\frac{R_1-R_2}{\sqrt{\sigma_1^2 + \sigma_2^2}}\right) \exp\left[-\frac{(R_1-R_2)^2}{\sigma_1^2 + \sigma_2^2}\right]
