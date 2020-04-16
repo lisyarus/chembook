@@ -1355,7 +1355,7 @@ I am setting the possible range of values \texttt{vmin..vmax} to something fixed
 
 \wideimage{trihydrogen-2d-3}
 
-The two wavefunctions on the right look pretty much the same, one being a rotated and/or reflected version of the other\footnote{See also \href{https://twitter.com/lisyarus/status/1099620329612365824}{my tweet} with an alternative visualization.}. What is interesting about them is that if we take the coefficients of one of these states corresponding to three basis functions with the same \texttt{sigma} and sum these three numbers, we get a zero. Let's check this:
+The two wavefunctions on the right look pretty much the same, one being a rotated and/or reflected version of the other\footnote{See also \href{https://twitter.com/lisyarus/status/1099620329612365824}{my tweet} with an alternative visualization.}. What is interesting about them is that if we take the coefficients of one of these states corresponding to three basis functions with the same \texttt{sigma} but different origin and sum these three numbers, we get a zero. Let's check this:
 
 \begin{python}
 for k in [1,2]:
@@ -1419,7 +1419,7 @@ def make_basis(params):
     return basis, nuclei
 \end{python}
 
-This won't get us anywhere, for there is indeed no such thing as \(HeH^{2+}\). We could instead take \(R=0.772\angstrom=1.459\) from the \(HeH^+\) cation and look at the orbitals:
+This won't get us anywhere (\texttt{R} will tend to infinity), for there is indeed no such thing as \(HeH^{2+}\). We could instead take \(R=0.772\angstrom=1.459\) from the \(HeH^+\) cation and look at the orbitals:
 
 \begin{python}
 def make_basis(params):
