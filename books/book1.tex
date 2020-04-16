@@ -626,7 +626,7 @@ At last we arrived to an actual chemical problem: the hydrogen atom. Assuming th
 Here, 
 
 \begin{itemize}
-\item \(\psi\) is a function (the wavefunction) of a three-component vector \(r\)\footnote{\(r\) may be thought of as representing the position of the electron, but care should be taken, for there is no \textit{the} position of an electron due to \href{https://en.wikipedia.org/wiki/Uncertainty_principle}{Heisenberg uncertainty}, and each possible \(r\) has a probability of finding the electron in that particular place.} (technically, an element of the space \(L^2(\mathbb R^3)\))
+\item \(\psi\) is a function (the wavefunction) of a three-component vector \(r\)\footnote{\(r\) may be thought of as representing the position of the electron, but care should be taken, for there is no \textit{the} position of an electron due to \href{https://en.wikipedia.org/wiki/Uncertainty_principle}{Heisenberg uncertainty}, and each possible \(r\) has a probability of finding the electron in that particular place.} (technically, \(\psi\) is an element of the space \(L^2(\mathbb R^3)\))
 \item \(\Delta\) is the \href{https://en.wikipedia.org/wiki/Laplace_operator}{Laplace operator} \(\frac{\partial^2}{\partial x^2}+\frac{\partial^2}{\partial y^2}+\frac{\partial^2}{\partial z^2}\) and accounts for the kinetic energy of an electron
 \item \(|r|=\sqrt{x^2+y^2+z^2}\) is the distance to nucleus
 \item \(-\frac{1}{|r|}\) is the \href{https://en.wikipedia.org/wiki/Electric_potential_energy}{Coulomb potential energy} of the attraction between electron (at distance \(|r|\)) and hydrogen nucleus.
@@ -945,7 +945,7 @@ We can plot the density, as well:
 
 Radial density doesn't make much sense in this case, since p-orbitals are not spherically symmetric.
 
-You may try getting more sophisticated orbitals (3d, 4d, 4f, ...) with higher \texttt{degree} of HGTO's, but the basis starts being close to degenerate, and \texttt{numpy.linalg.LinAlgError} appears more and more.\footnote{As I've said before, it is possible to overcome this using SVD, but this is out of the scope of this book.} At this point, we move on to other systems.
+You may try getting more sophisticated orbitals (3d, 4d, 4f, ...) with higher \texttt{degree} of HGTO's, but the basis starts being close to degenerate, and \texttt{numpy.linalg.LinAlgError} appears more and more often.\footnote{As I've said before, it is possible to overcome this using SVD, but this is out of the scope of this book.} At this point, we move on to other systems.
 
 \newpage
 
@@ -981,7 +981,7 @@ The three first energies are close to being right. Plotting the radial density
 
 \image{helium-radial-s-3}
 
-we can see that the orbitals are closer to the nucleus. This makes sense: the higher the nuclear charge, the stronger is the nucleus-electron attraction. This leads to an interesting phenomenon: all atoms are \textit{roughly} of the same size! Larger atomic number means higher nucleus charge, so the electrons are attracted more and fly closer to the nucleus; however, more electrons means they repel each other and don't concentrate near the nucleus.\footnote{This absence of electron concentration is also largely due to the \href{https://en.wikipedia.org/wiki/Pauli_exclusion_principle}{Pauli principle}, in turn related to the fact that electrons are fermions. Bosons, however, \textit{can} concentrate in one place, which leads to the existence of \href{https://en.wikipedia.org/wiki/Bose\%E2\%80\%93Einstein_condensate}{Bose-Einstein condensate}.}
+we can see that the orbitals are closer to the nucleus compared to the hydrogen orbitals. This makes sense: the higher the nuclear charge, the stronger is the nucleus-electron attraction. This leads to an interesting phenomenon: all atoms are \textit{roughly} of the same size! Larger atomic number means higher nucleus charge, so the electrons are attracted more and fly closer to the nucleus; however, more electrons means they repel each other and don't concentrate near the nucleus.\footnote{This absence of electron concentration is also largely due to the \href{https://en.wikipedia.org/wiki/Pauli_exclusion_principle}{Pauli principle}, in turn related to the fact that electrons are fermions. Bosons, however, \textit{can} concentrate in one place, which leads to the existence of \href{https://en.wikipedia.org/wiki/Bose\%E2\%80\%93Einstein_condensate}{Bose-Einstein condensate}.}
 
 We can find and plot the p-orbitals as well, which will again look the same as hydrogen p-orbitals, but closer to the nucleus and having higher energy.
 
@@ -1162,7 +1162,7 @@ It seems to be a general phenomenon that the ground state will be as symmetric a
 
  How do we know whether these states correspond to something real, occurring in nature? Consider the limit case of \(R \rightarrow \infty\). The repulsion between the nuclei would be negligibly small, and the usual hydrogenic orbitals of the two atoms would be almost non-overlapping (thus have a zero overlap integral, thus be orthogonal). The two lowest energy eigenstates will be the 1s orbital on the first atom and the 1s orbital on the second atom, both having energy \(-0.5\). Due to the variational principle, any state of this system will have energy of at least \(-0.5\). The gerade state of \(H_2^+\), however, has a \textit{lower} energy of \(\approx-0.59\), meaning that this state is more preferable than having two completely separate nuclei.
 
- The ungerade state has energy much higher than \(-0.5\), meaning that an ion could not exist long in this state. This state is just an eigenstate of the system with fixed nuclei, and would break if you make the nuclei free. This is exactly what happens if you try our trick of optimizing for the sum of the first two energy values: two highly separated hydrogen nuclei give a sum of \(-0.5-0.5=-1.0\), while two eigenstates of \(H_2^+\) give a higher value of about \(-0.75\), meaning that optimization would prefer the former, and no ions will be found.
+ The ungerade state has energy much higher than \(-0.5\), meaning that an ion could not exist long in this state. This state is just an eigenstate of the system with fixed nuclei, and would break if you let the nuclei move. This is exactly what happens if you try our trick of optimizing for the sum of the first two energy values: two highly separated hydrogen nuclei give a sum of \(-0.5-0.5=-1.0\), while two eigenstates of \(H_2^+\) give a higher value of about \(-0.75\), meaning that optimization would prefer the former, and no ions will be found.
 
 A hydrogen molecule \(H_2\) looks pretty much the same, but the internuclear distance is smaller, about \(R\approx 1.4\), because there are two electrons now\footnote{As in helium atom, the Pauli principle hardly changes anything here: two electrons, two spins.}, but the density is a bit more spread out due to electron-electron repulsion.
 
