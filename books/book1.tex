@@ -1501,8 +1501,211 @@ There isn't much else we can do at this point. Most chemical systems have a lot 
 \end{thebibliography}
 
 \begin{appendices}
+
+\newpage
+
 \section{Hermite polynomials} \label{apx:hermite}
-\section{Derivation of GTO integrals} \label{apx:integrals}
+
+Among the vast number of different polynomial families, Hermite polynomials are particularly suited to dealing with Gaussians. We define\footnote{There are two conventions; we use the physicist's convention here. See \href{https://en.wikipedia.org/wiki/Hermite_polynomials}{wikipedia}.} them as follows:
+
+\begin{equation} \label{eq:hermite-def}
+H_n(x) = (-1)^n e^{x^2} \frac{d^n}{dx^n}e^{-x^2}
+\end{equation}
+
+The first few of them are
+
+% \begin{equation}
+\begin{align}
+H_0(x) &= 1 \\
+H_1(x) &= 2x \\
+H_2(x) &= 4x^2-2 \\
+H_3(x) &= 8x^3-12x
+\end{align}
+% \end{equation}
+
+The definition \eqref{eq:hermite-def} can also be written in terms of repeated application of a certain operator:
+
+\begin{equation} \label{eq:hermite-def-op}
+\eqref{eq:hermite-def} = \left[ -e^{x^2}\frac{d}{dx}e^{-x^2} \right]\cdot\left[ -e^{x^2}\frac{d}{dx}e^{-x^2} \right]\cdot\dots\cdot\left[ -e^{x^2}\frac{d}{dx}e^{-x^2} \right]\cdot 1 =
+\left[ -e^{x^2}\frac{d}{dx}e^{-x^2} \right]^n 1
+\end{equation}
+
+Notice how the exponents in the middle cancel out. This equation gives a recursive formula for Hermite polynomials:
+
+\begin{equation} \label{eq:hermite-rec-1}
+H_{n+1}(x) = -e^{x^2}\frac{d}{dx}e^{-x^2} H_n(x)
+\end{equation}
+
+Expanding this, we get
+
+\begin{equation} \label{eq:hermite-rec-2}
+H_{n+1}(x) = -e^{x^2}\left(-2xe^{-x^2}H_n(x)+e^{-x^2}H'_n(x)\right) = 2xH_n(x) - H'_n(x) = \left[2x - \frac{d}{dx}\right] H_n(x)
+\end{equation}
+
+leading to another operator-power type equation:
+
+\begin{equation}
+H_n(x) = \left[2x - \frac{d}{dx}\right]^n 1
+\end{equation}
+
+We now use \eqref{eq:hermite-rec-2} and induction to confirm that \begin{math}H'_n(x) = 2nH_{n-1}(x)\end{math}:
+
+\begin{equation} \label{eq:hermite-der}
+\begin{gathered}
+H'_1(x) = (2x)' = 2 = 2\cdot 1\cdot H_0(x) \\
+H'_{n+1}(x) = (2xH_n(x) - H'_n(x))' = 2H_n(x) + 2xH'_n(x) - H''(n) = 2H_n(x) + 2x\cdot 2nH_{n-1}(x) - 2nH'_{n-1}(x) = \\
+= 2H_n(x) + 2n(2xH_{n-1}(x) - H'_{n-1}(x)) \equalby{eq:hermite-rec-2} 2H_n(x) + 2nH_n(x) = 2(n+1)H_n(x)
+\end{gathered}
+\end{equation}
+
+Substituting \eqref{eq:hermite-der} into \eqref{eq:hermite-rec-2}, we get
+
+\begin{equation} \label{eq:hermite-rec}
+H_{n+1}(x) = 2xH_n(x) - H'_n(x) = 2xH_n(x) - 2nH_{n-1}(x)
+\end{equation}
+
+which can be used to recursively evaluate Hermite polynomials of any order.
+
+\newpage
+
+\section{Derivation of HGTO integrals} \label{apx:integrals}
+
+Recall that we defined Hermite-Gaussian-type orbitals (HGTO's) as
+
+\begin{equation}
+\phi_{R,\sigma,n}(x,y,z) = H_{n_x}\left(\frac{x-R_x}{\sigma}\right)H_{n_y}\left(\frac{y-R_y}{\sigma}\right)H_{n_z}\left(\frac{z-R_z}{\sigma}\right) e^{-\frac{(x-R_x)^2+(y-R_y)^2+(z-R_z)^2}{\sigma^2}}
+\end{equation}
+
+where \begin{math}R \in \mathbb{R}^3\end{math} is the coordintate vector of the function's origin, \begin{math}n\in\mathbb{N}^3\end{math} is its degree, while \begin{math}\sigma \in \mathbb{R}\end{math} controls its spread, so an HGTO is defined by these 4 real numbers and 3 non-negative integers.
+
+The key to integrating them is the decomposition into a product of 1D-functions
+
+\begin{equation} \label{eq:hgto-decomposition-1d}
+\phi_{R,\sigma,n}(x,y,z) = \phi_{R_x,\sigma,n_x}(x)\phi_{R_y,\sigma,n_y}(y)\phi_{R_z,\sigma,n_z}(z)
+\end{equation}
+
+where we defined
+
+\begin{equation}
+\phi_{R,\sigma,n}(x) = H_n\left(\frac{x-R}{\sigma}\right) e^{-\frac{(x-R)^2}{\sigma^2}}
+\end{equation}
+
+Here, \begin{math}R,\sigma \in \mathbb{R}\end{math} and \begin{math}n \in \mathbb{N}\end{math}. Since the 3D and 1D functions have different number of parameters, reusing the letters should cause no confusion.
+
+Recall \eqref{eq:hermite-def} that
+
+\begin{equation}
+\frac{d^n}{dx^n}e^{-x^2} = (-1)^n H_n(x) e^{-x^2}
+\end{equation}
+
+Thus
+
+\begin{equation} \label{eq:gaussian-der-hermite-1}
+\frac{d^n}{dx^n}e^{-\left(\frac{x-R}{\sigma}\right)^2} = (-1)^n \sigma^{-n} H_n \left(\frac{x-R}{\sigma}\right) e^{-\left(\frac{x-R}{\sigma}\right)^2}
+\end{equation}
+
+and
+
+\begin{equation} \label{eq:gaussian-der-hermite-2}
+\frac{d^n}{dR^n}e^{-\left(\frac{x-R}{\sigma}\right)^2} = \sigma^{-n} H_n \left(\frac{x-R}{\sigma}\right) e^{-\left(\frac{x-R}{\sigma}\right)^2}
+\end{equation}
+
+and also
+
+\begin{equation} \label{eq:gaussian-der-hermite-3}
+\frac{d^n}{dR^n}\frac{d^m}{dx_m}e^{-\left(\frac{x-R}{\sigma}\right)^2} = \frac{d^n}{dR^n}(-1)^m\frac{d^m}{dR_m}e^{-\left(\frac{x-R}{\sigma}\right)^2} =
+(-1)^m \sigma^{-(m+n)} H_{m+n} \left(\frac{x-R}{\sigma}\right) e^{-\left(\frac{x-R}{\sigma}\right)^2}
+\end{equation}
+
+\eqref{eq:gaussian-der-hermite-2} leads to
+
+\begin{equation} \label{eq:hgto-param}
+\phi_{R,\sigma,n}(x) = \sigma^n \frac{d^n}{dR^n}e^{-\left(\frac{x-R}{\sigma}\right)^2}
+\end{equation}
+
+This observation makes it possible to only compute the integrals for the case \begin{math}n=0\end{math} and then use differentiation on the resulting formula.
+
+The final ingredient is the result occasionally known as the Gaussian product theorem: a product of Gaussians is again a Gaussian. 
+
+\begin{equation} \label{eq:gaussian-prod-1}
+\left(\frac{x-R_1}{\sigma_1}\right)^2 + \left(\frac{x-R_2}{\sigma_2}\right)^2 = \left(\frac{1}{\sigma_1^2}+\frac{1}{\sigma_2^2}\right)x^2
+- 2 \left(\frac{R_1}{\sigma_1^2}+\frac{R_2}{\sigma_2^2}\right)x + \left(\frac{R_1^2}{\sigma_1^2}+\frac{R_2^2}{\sigma_2^2}\right)
+\end{equation}
+
+Denote
+\begin{equation}
+\Sigma = \left(\frac{1}{\sigma_1^2}+\frac{1}{\sigma_2^2}\right)^{-\frac{1}{2}} = \left(\frac{\sigma_1^2\sigma_2^2}{\sigma_1^2+\sigma_2^2}\right)^\frac{1}{2}
+\end{equation}
+
+so that
+\begin{equation} \label{eq:gaussian-prod-2}
+\begin{gathered}
+\eqref{eq:gaussian-prod-1} = \frac{1}{\Sigma^2}\left[x^2 - 2\left(\frac{R_1}{\sigma_1^2}+\frac{R_2}{\sigma_2^2}\right)\Sigma^2x\right]+\left(\frac{R_1^2}{\sigma_1^2}+\frac{R_2^2}{\sigma_2^2}\right) =\\
+= \frac{1}{\Sigma^2}\left[x^2 - 2\left(\frac{R_1}{\sigma_1^2}+\frac{R_2}{\sigma_2^2}\right)\Sigma^2x {\color{blue}+ \left(\frac{R_1}{\sigma_1^2}+\frac{R_2}{\sigma_2^2}\right)^2\Sigma^4-\left(\frac{R_1}{\sigma_1^2}+\frac{R_2}{\sigma_2^2}\right)^2\Sigma^4}\right]+\left(\frac{R_1^2}{\sigma_1^2}+\frac{R_2^2}{\sigma_2^2}\right) = \\
+= \frac{1}{\Sigma^2}\left[x - \left(\frac{R_1}{\sigma_1^2}+\frac{R_2}{\sigma_2^2}\right)\Sigma^2\right]^2 - \left(\frac{R_1}{\sigma_1^2}+\frac{R_2}{\sigma_2^2}\right)^2\Sigma^2 + \left(\frac{R_1^2}{\sigma_1^2}+\frac{R_2^2}{\sigma_2^2}\right) = \\
+= \frac{1}{\Sigma^2}\left[x - \left(\frac{R_1}{\sigma_1^2}+\frac{R_2}{\sigma_2^2}\right)\Sigma^2\right]^2 + \Sigma^2\left[ - \left(\frac{R_1}{\sigma_1^2}+\frac{R_2}{\sigma_2^2}\right)^2 + \left(\frac{R_1^2}{\sigma_1^2}+\frac{R_2^2}{\sigma_2^2}\right) \Sigma^{-2}\right] = \\
+= \frac{1}{\Sigma^2}\left[x - \left(\frac{R_1}{\sigma_1^2}+\frac{R_2}{\sigma_2^2}\right)\Sigma^2\right]^2 + \Sigma^2\left[ - \left(\frac{R_1}{\sigma_1^2}+\frac{R_2}{\sigma_2^2}\right)^2 + \left(\frac{R_1^2}{\sigma_1^2}+\frac{R_2^2}{\sigma_2^2}\right) \left(\frac{1}{\sigma_1^2} + \frac{1}{\sigma_2^2}\right)\right] = \\
+= \frac{1}{\Sigma^2}\left[x - \left(\frac{R_1}{\sigma_1^2}+\frac{R_2}{\sigma_2^2}\right)\Sigma^2\right]^2 + \Sigma^2\left[{\color{red}-\frac{R_1^2}{\sigma_1^4}}-2\frac{R_1R_2}{\sigma_1^2\sigma_2^2}{\color{red}-\frac{R_2^2}{\sigma_2^4}} {\color{red}+\frac{R_1^2}{\sigma_1^4}} + \frac{R_1^2}{\sigma_1^2\sigma_2^2} + \frac{R_2^2}{\sigma_1^2\sigma_2^2}{\color{red}+\frac{R_2^2}{\sigma_2^4}}\right] = \\
+= \frac{1}{\Sigma^2}\left[x - \left(\frac{R_1}{\sigma_1^2}+\frac{R_2}{\sigma_2^2}\right)\Sigma^2\right]^2 + \Sigma^2\left[\frac{(R_1-R_2)^2}{\sigma_1^2\sigma_2^2}\right] =
+\frac{1}{\Sigma^2}\left[x - \left(\frac{R_1}{\sigma_1^2}+\frac{R_2}{\sigma_2^2}\right)\Sigma^2\right]^2 + \frac{(R_1-R_2)^2}{\sigma_1^2+\sigma_2^2}
+\end{gathered}
+\end{equation}
+
+Using \eqref{eq:gaussian-prod-2}, we obtain
+
+\begin{equation} \label{eq:gaussian-prod}
+\exp\left[-\left(\frac{x-R_1}{\sigma_1}\right)^2\right]\exp\left[-\left(\frac{x-R_2}{\sigma_2}\right)^2\right] =
+\exp\left[-\left(\frac{x-A}{\Sigma}\right)^2\right]\exp\left[-\frac{(R_1-R_2)^2}{\sigma_1^2 + \sigma_2^2}\right]
+\end{equation}
+
+where
+
+\begin{equation}
+A = \left(\frac{R_1}{\sigma_1^2}+\frac{R_2}{\sigma_2^2}\right)\Sigma^2
+\end{equation}
+
+We will also need the well-known \href{https://en.wikipedia.org/wiki/Gaussian_integral}{Gaussian integral}:
+
+\begin{equation}
+\int\limits_{-\infty}^\infty \exp\left[-\left(\frac{x-a}{b}\right)^2\right]dx = b\sqrt\pi
+\end{equation}
+
+\subsection{Overlap integral}
+
+We are ready to compute the overlap integral of two HGTO's:
+
+\begin{equation} \label{eq:hgto-overlap-1}
+\langle \phi_{R_1,\sigma_1,n_1}, \phi_{R_2,\sigma_2,n_2} \rangle = \int\limits_{\mathbb{R}^3} \phi_{R_1,\sigma_1,n_1}(x,y,z) \phi_{R_2,\sigma_2,n_2}(x,y,z) dxdydz
+\end{equation}
+
+First, employ the decomposition into 1D functions \eqref{eq:hgto-decomposition-1d} to separate the integrals:
+
+\begin{equation} \label{eq:hgto-overlap-2}
+\eqref{eq:hgto-overlap-1} = \left[\int\limits_{-\infty}^\infty \phi_{R_{1x},\sigma_1,n_{1x}}(x)\phi_{R_{2x},\sigma_2,n_{2x}}(x) dx\right] \cdot \left[\dots dy\right]\cdot \left[\dots dz\right]
+\end{equation}
+
+We will temporarily focus on the \begin{math}x\end{math}-integral only, and drop the \textit{x} subscript.
+
+Now, use \eqref{eq:hgto-param} to remove the Hermite polynomials:
+
+\begin{equation} \label{eq:hgto-overlap-3}
+\int\limits_{-\infty}^\infty \phi_{R_1,\sigma_1,n_1}(x)\phi_{R_2,\sigma_2,n_2}(x) dx =
+\sigma_1^{n_1}\sigma_2^{n_2} \frac{d^{n_1}}{dR_1^{n_1}} \frac{d^{n_2}}{dR_2^{n_2}} \int\limits_{-\infty}^\infty \exp\left[-\left(\frac{x-R_1}{\sigma_1}\right)^2\right] \exp\left[-\left(\frac{x-R_2}{\sigma_2}\right)^2\right] dx
+\end{equation}
+
+Next, use \eqref{eq:gaussian-prod}
+
+\begin{equation} \label{eq:hgto-overlap}
+\begin{gathered}
+\eqref{eq:hgto-overlap-3} = \sigma_1^{n_1}\sigma_2^{n_2} \frac{d^{n_1}}{dR_1^{n_1}} \frac{d^{n_2}}{dR_2^{n_2}} \int\limits_{-\infty}^\infty \exp\left[-\left(\frac{x-A}{\Sigma}\right)^2\right]\exp\left[-\frac{(R_1-R_2)^2}{\sigma_1^2 + \sigma_2^2}\right] dx = \\
+= \sigma_1^{n_1}\sigma_2^{n_2} \cdot \left[ \frac{d^{n_1}}{dR_1^{n_1}} \frac{d^{n_2}}{dR_2^{n_2}} \exp\left[-\frac{(R_1-R_2)^2}{\sigma_1^2 + \sigma_2^2}\right] \right] \cdot \int\limits_{-\infty}^\infty \exp\left[-\left(\frac{x-A}{\Sigma}\right)^2\right] dx = \\
+= \sigma_1^{n_1}\sigma_2^{n_2} \Sigma \sqrt\pi \cdot \left[ \frac{d^{n_1}}{dR_1^{n_1}} \frac{d^{n_2}}{dR_2^{n_2}} \exp\left[-\left(\frac{R_1-R_2}{\sqrt{\sigma_1^2 + \sigma_2^2}}\right)^2\right] \right] \equalby{eq:gaussian-der-hermite-2} \\
+= \sigma_1^{n_1}\sigma_2^{n_2} \Sigma \sqrt\pi (-1)^{n_1} (\sigma_1^2+\sigma_2^2)^{-\frac{n_1+n_2}{2}} H_{n_1+n_2}\left(\frac{R_1-R_2}{\sqrt{\sigma_1^2 + \sigma_2^2}}\right) \exp\left[-\frac{(R_1-R_2)^2}{\sigma_1^2 + \sigma_2^2}\right]
+\end{gathered}
+\end{equation}
+
+This is the final formula for the overlap integral of two 1D HGTO's. The integral for 3D functions is the product of three 1D integrals \eqref{eq:hgto-overlap-2}. Everything here is just arithmetic, except square roots and exponentials, which can be computed using standard routines in most programming languages, and Hermite polynomials, which can be computed using \eqref{eq:hermite-rec}.
+
 \end{appendices}
 
 \end{document}
