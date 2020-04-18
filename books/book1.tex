@@ -107,7 +107,7 @@ It has already been a month of me trying to come up with a perfect introduction 
 \item Python tutorial
 \end{itemize}
 
-But what it \textit{is}, then? Well, a sturdy mix of all the above, aimed at getting physically significant results as soon as possible, yet without sacrificing understanding. We are going to write some Python code using \href{https://numpy.org}{\texttt{numpy}} and \href{https://www.scipy.org}{\texttt{scipy}} libraries (and ocasionally \href{https://matplotlib.org}{\texttt{matplotlib}}, if you want some fancy plots \& images) and obtain energies and orbital densities for some pretty tiny chemical systems (that is, systems composed of nuclei \& electrons). You will also most probably need a file called \texttt{hgto.py} which you can download directly from \href{\githubrepo/blob/master/code/hgto.py}{my github}.
+But what it \textit{is}, then? Well, a sturdy mix of all the above, aimed at getting physically significant results as soon as possible, yet without sacrificing understanding. We are going to write some Python code using \href{https://numpy.org}{\texttt{numpy}} and \href{https://www.scipy.org}{\texttt{scipy}} libraries (and ocasionally \href{https://matplotlib.org}{\texttt{matplotlib}}, if you want some fancy plots \& images) and obtain energies and orbital densities for some pretty tiny chemical systems (that is, systems composed of nuclei \& electrons). You will also most probably need a file called \texttt{hgto.py} (that just contains routines for evaluating certain integrals) which you can download directly from \href{\githubrepo/blob/master/code/hgto.py}{my github}.
 
 The reader is expected to have \textit{at least} a bit of knowledge of physics/chemistry, basic mathematics and Python programming language. For getting into the physics and maths involved, I recommend either reading the first few chapters of \cite{ref:atkins} or at least not skipping the \nameref{sec:var} section. For learning Python, I recommend googling some tutorials/courses/etc., for there are way too many of them to recommend anything in particular.
 
@@ -126,15 +126,15 @@ Finally, feel free to \href{mailto:lisyarus@gmail.com}{email me} if you have som
 
 So, what we are going to do is compute the lowest-energy states of atoms \& ions. Why is energy so important?
 
-In any decent physical framework (e.g. classical or quantum mechanics) total energy of a closed system is conserved. It consists of several parts (e.g. kinetic + potential) which don't necessarily remain constant by themselves, but conservation of total energy implies that a decrease in one part leads to an increase in another. Consider a perfectly reasonable situation of a rock falling from the sky: the higher it is, the higher is the potential energy; as the rock falls down, the potential energy decreases, leading to an increase in kinetic energy, i.e. acceleration (some people call this \textit{gravity}).
+In any decent physical framework (e.g. classical or quantum mechanics) the total energy of a closed system is conserved. It consists of several parts (e.g. kinetic + potential) which don't necessarily remain constant by themselves, but conservation of total energy implies that a decrease in one part leads to an increase in another. Consider a perfectly reasonable situation of a rock falling from the sky: the higher it is, the higher is the potential energy; as the rock falls down, the potential energy decreases, leading to an increase in kinetic energy, i.e. acceleration (some people call this \textit{gravity}).
 
-We know that even if the rock was thrown up in the air, it would eventually fall down anyway. This is how all mechanical systems behave: they accelerate towards areas of less potential energy (this is Newton's second law). This doesn't generally mean that the system eventually falls into a local minimum of potential energy. Remember that as potential energy decreases, the kinetic energy increases, so upon reaching a local minimum the system would run with insane speeds and miss the minimum completely. This doesn't happen to rocks, though, since energy is converted into stresses in the ground when the rock finally reaches it, but this does happen to pendulums: the potential energy minimum is when the pendulum is at its lowest point, yet the pendulum flies through it at high speed over and over again, never stopping there.
+We know that even if the rock was thrown up in the air, it would eventually fall down anyway. This is how all mechanical systems behave: they accelerate towards areas of less potential energy (this is Newton's second law). This doesn't generally mean that the system eventually falls into a local minimum of potential energy. Remember that as potential energy decreases, the kinetic energy increases, so upon reaching a local minimum the system would run with insane speeds and miss the minimum completely. This doesn't happen to rocks, though, since energy is converted into stresses in the ground when the rock finally hits it, but this does happen to pendulums: the potential energy minimum is when the pendulum is at its lowest point, yet the pendulum flies through it at high speed over and over again, never stopping there (it does eventually stop due to friction, but that's another story).
 
 A system can, however, reach a local minimum of potential energy if it has some energy sink that can absorb excess kinetic energy. Typically, this sink is just the environment: a particle constantly hitting another particles quickly loses spare kinetic energy and reaches so-called thermal equilibrium. Recall that temperature is simply average kinetic energy; thus, the lower the surrounding temperature, the higher are the chances that the system will be found in a local minimum of potential energy. And \textit{this} effect is the major reason why we seek for lowest-energy states: most molecules in real life are found in those states supplemented with small kinetic fluctuations (real molecules aren't static, they wiggle and bend randomly).
 
 Interactions can likewise be described in terms of energy: attractive force between particles means that the closer they are, the lower the energy, and repulsive force means the opposite. A \textit{bond} happens when the interaction between two systems (say, particles) has a local minimum of potential energy at some specific distance between the systems. The energy of the bond is the difference between the energy of two systems combined when the bonding takes place and the energy when they are so far that no interaction is present at all. Thus, creating a bond releases energy, while breaking it requires energy. This, coupled with some termodynamics, leads to equations that allow us to predict temperature changes in chemical reactions, provided we know the energies of the bonds. By the way, a chemical reaction is a process of forming and breaking chemical bonds. Bonds are called chemical when they happen between atomic nuclei and electrons, and usually involve at least three participants (two nuclei and an electron holding them together). As an extreme example, a piece of metal can be considered to be a single bond between all particles involved (this is so-called \textit{metallic bonding}).
 
-I think I have convinced the reader that energies are of great utility and importance. They allow us to predict which reactions can happen and which cannot, and at what temperature. They can let us visualize what molecules look like, i.e. what is the geometry of the molecules. What is especially nice is that chemists can actually observe the energies directly --- or, rather, the differences between them, --- simply by looking at the molecules at some special conditions: this is called \textit{spectroscopy}. Well, okay, the word ``simply'' was slightly unfair, but the point is that there are methods that can verify energy calculations with great precision.
+I think I have convinced the reader that energies are of great utility and importance. They allow us to predict which reactions can happen and which cannot, and at what temperature. They can let us visualize what molecules look like, i.e. what is the geometry of the molecules. What is especially nice is that chemists can actually observe the energies directly --- or, rather, the differences between them, --- simply by looking at the molecules at some special conditions: this is called \textit{spectroscopy}\footnote{Performing this to a hydrogen atom was one of the things that led to quantum mechanics.}. The word ``simply'' might have been slightly unfair, but the point is that there are methods that can verify energy calculations with great precision.
 
 \newpage
 
@@ -146,11 +146,11 @@ It turns out I've rediscovered one of the many problems of XIX-century physics: 
 
 \begin{itemize}
 \item \href{https://en.wikipedia.org/wiki/Earnshaw's_theorem}{Earnshaw's theorem}: a system of charged particles cannot reach stable equilibrium by means of electrostatic forces alone, --- this is exactly what I've faced when trying to simulate those
-\item Electromagnetic radiation: an electron orbiting a nucleus would lose energy by \href{https://en.wikipedia.org/wiki/Larmor_formula}{emitting electromagnetic waves}, thus eventually falling on the nucleus
+\item Electromagnetic radiation: an electron orbiting a nucleus would lose energy by \href{https://en.wikipedia.org/wiki/Larmor_formula}{emitting electromagnetic waves}, thus eventually falling onto the nucleus
 \item Discrete emission spectrum: it was observed via spectroscopy that the possible energy levels of hydrogen are \href{https://en.wikipedia.org/wiki/Hydrogen_spectral_series}{discrete}, although classical mechanics always predicts a continuous range of possible energy levels
 \end{itemize}
 
-Quantum mechanics came to the rescue. The advantage of this new theory is that it correctly describes an enormous number of previously unexplained phenomena. The disadvantage, however, is that the mathematics involved is quite hard, sometimes ridiculously hard. In classical mechanics, to predict the motion of a particle, you would solve an \textit{ordinary differential equation} --- pick up your favourite method (4th-order Runge-Kutta seemingly being the most popular one) and you are done. In quantum mechanics, you have to solve a \textit{hyperbolic partial differential equation}, --- which are notoriously hard to solve numerically, --- not to mention that we don't have the notions of exact particle's posisition or momentum anymore. In classical mechanics, if you have \(N\) particles, you'd just solve \(N\) coupled ordinary differential equations using the same methods --- they work here as well. In quantum mechanics, if you have \(N\) particles, you still have a single hyperbolic partial differential equation, but in \textit{\(3N\)-dimensional space}! All conventional space discretization schemes are useless here: if you wanted to discretize each spatial direction into, say, \(10\) nodes, -- which is still too few to be useful, --- you'd need \(10^{3N}\) nodes overall. If \(N\) is the number of electrons in a water molecule, that is, \(N=10\), we get a nice value of \(10^{30}\) nodes. In comparison, your computer probably has something about \(10^{10}\) bytes of RAM.
+Quantum mechanics came to the rescue. The advantage of this new theory is that it correctly describes an enormous number of previously unexplained phenomena. The disadvantage, however, is that the mathematics involved is quite hard, sometimes ridiculously hard. In classical mechanics, to predict the motion of a particle, you would solve an \textit{ordinary differential equation} --- pick up your favourite method (4th-order Runge-Kutta seemingly being the most popular one) and you are done. In quantum mechanics, you have to solve a \textit{hyperbolic partial differential equation}, --- which are notoriously hard to solve numerically, --- not to mention that we don't have the notions of exact particle's posisition or momentum anymore. In classical mechanics, if you have \(N\) particles, you'd just solve \(N\) coupled ordinary differential equations using the same methods --- they work here as well. In quantum mechanics, if you have \(N\) particles, you still have a single hyperbolic partial differential equation, but in \textit{\(3N\)-dimensional space}! All conventional space discretization schemes are useless here: if you wanted to discretize each spatial direction into, say, \(10\) nodes, -- which is still too few to be useful\footnote{See also \href{https://twitter.com/lisyarus/status/1098302494470520832}{my miserable attempts}.}, --- you'd need \(10^{3N}\) nodes overall. If \(N\) is the number of electrons in a water molecule, that is, \(N=10\), we get a nice value of \(10^{30}\) nodes. In comparison, your computer probably has something about \(10^{10}\) bytes of RAM.
 
 Gladly, being difficult is very far from being impossible, and we are going to employ this nice observation.
 
@@ -339,6 +339,7 @@ First of all, import the required libraries:
 import math
 import numpy
 import scipy.linalg
+import matplotlib.pyplot as pyplot
 \end{python}
 
 Write down the formulas for overlap\eqref{eq:exp-overlap}, kinetic\eqref{eq:exp-kinetic}, and potential\eqref{eq:exp-potential} integrals in python code:
@@ -588,13 +589,13 @@ This section is already 8 pages long. I hope you got the basis idea, for it is t
 
 \section{Practical considerations} \label{sec:pract}
 
-We have seen that in order to use the linear variational method we need to pick a nice basis set --- a bunch of parametrized functions that are well-suited for integrals. A particularly nice choice for chemical systems are \textit{gaussian-type orbitals}, often abbreviated as GTOs, multiplied by Hermite polynomials. Usually, \textit{cartesian} GTOs (CGTOs) are used, where a gaussian is multiplied by monomials of the form \(x^ay^bz^c\). However, Hermite polynomials make the integrals much easier, --- in fact, the derivations of integrals for CGTOs often include steps to convert them to Hermite polynomials, so why not use them directly instead? Furthemore, this cartesian gaussian-type orbitals are usually used indirectly: the actual basis set used is Slater-type orbitals (STOs), with functions taken directly from eigenstates of the hydrogen atom, but those are internally represented as a linear combination of GTOs (known as \textit{contracted} GTOs or cGTOs) to simplify the integrals. It is however a lot easier to work with gaussian-type functions instead. The general form of such a function looks like this:
+We have seen that in order to use the linear variational method we need to pick a nice basis set --- a bunch of parametrized functions that are well-suited for integrals. A particularly nice choice for chemical systems are \textit{gaussian-type orbitals}, often abbreviated as GTOs, multiplied by Hermite polynomials. Usually, \textit{cartesian} GTOs (CGTOs) are used, where a gaussian is multiplied by monomials of the form \(x^ay^bz^c\). However, Hermite polynomials make the integrals much easier, --- in fact, the derivations of integrals for CGTOs often include steps to convert them to Hermite polynomials, so why not use them directly instead? Furthemore, this cartesian gaussian-type orbitals are usually used indirectly: the actual basis set used is Slater-type orbitals (STOs), with functions taken directly from eigenstates of the hydrogen atom, but those are internally represented as a linear combination of GTOs (known as \textit{contracted} GTOs or cGTOs) to simplify the integrals. It is however a lot easier to work with gaussian-type functions directly instead. The general form of such a function looks like this:
 
 \begin{equation}
 \phi_{R,\sigma,n}(x,y,z) = H_{n_x}\left(\frac{x-R_x}{\sigma}\right)H_{n_y}\left(\frac{y-R_y}{\sigma}\right)H_{n_z}\left(\frac{z-R_z}{\sigma}\right) e^{-\frac{(x-R_x)^2+(y-R_y)^2+(z-R_z)^2}{\sigma^2}}
 \end{equation}
 
-It has three integer parameters \(n_x,n_y,n_z\) and four real parameters \(R_x,R_y,R_z,\sigma\). This function is localized around the point \((R_x,R_y,R_z)\), with the parameter \(\sigma\) controlling the spread (less \(\sigma\) means more localized function). \(H_n(x)\) is the \(n\)-th Hermite polynomial, and the integers \(n_x,n_y,n_z\) are responsible for that. They make these basis functions look more like hydrogen p-orbitals, d-orbitals, f-orbitals, and so on. Note that in case \(n_x=n_y=n_z=0\), the basis function is just a \href{https://en.wikipedia.org/wiki/Gaussian_function}{gaussian}.
+It has three integer parameters \(n_x,n_y,n_z\) and four real parameters \(R_x,R_y,R_z,\sigma\). This function is localized around the point \((R_x,R_y,R_z)\), with the parameter \(\sigma\) controlling the spread (less \(\sigma\) means more localized function). \(H_n(x)\) is the \(n\)-th \href{https://en.wikipedia.org/wiki/Hermite_polynomials}{Hermite polynomial}, and the integers \(n_x,n_y,n_z\) are responsible for that. They make these basis functions look more like hydrogen p-orbitals, d-orbitals, f-orbitals, and so on. Note that in case \(n_x=n_y=n_z=0\), the basis function is just a \href{https://en.wikipedia.org/wiki/Gaussian_function}{gaussian}.
 
 I've put the derivations of the integrals with this basis functions to the appendix. These integrals are arguably the most difficult and the least interesting or instructive part of the whole process. You may look into the appendix and type the formulas into python (or whatever language you use) yourself, or you may download a package from \href{\githubrepo/blob/master/code/hgto.py}{github} that implements them. The code in the following sections assumes the latter.
 
@@ -736,7 +737,7 @@ positive definite. The factorization of 'b' could not be completed and
 no eigenvalues or eigenvectors were computed.
 \end{console}
 
-This comes from the Cholesky decomposition that is invoked as part of \texttt{scipy.linalg.eigh} and means that the basis that we supplied is too close to being linearly dependent, --- in particular, if two of the \texttt{sigma} are too close to each other. You might note that the error pops up a lot when the \texttt{sigma} become negative: due to numerical errors having \(\sigma_1\approx-\sigma_2\) leads to erroneously low values of energy, while the corresponding basis functions are almost the same (since only \(\sigma^2\) is involved in the formulas). It would be better to use constrained optimization (to require \(\sigma > 0\)), or use singular value decomposition and restrict to a better-behaving subbasis.
+This comes from the Cholesky decomposition that is invoked as part of \texttt{scipy.linalg.eigh} and means that the basis that we supplied is too close to being linearly dependent, --- in particular, if two of the \texttt{sigma} are too close to each other. You might also notice that the error pops up a lot when the \texttt{sigma} become negative: due to numerical errors having \(\sigma_1\approx-\sigma_2\) leads to erroneously low values of energy, while the corresponding basis functions are almost the same (since only \(\sigma^2\) is involved in the formulas). It would be better to use constrained optimization (to require \(\sigma > 0\)), or use singular value decomposition and restrict to a better-behaving subbasis.
 
 It is however much easier to just call the script again in hope that this time the random initial parameters would be better, or even wrap the \texttt{optimize} routine with a loop that starts over and over again until the optimization succeeds without an exception. In any case, you should get something like this:
 
@@ -801,7 +802,7 @@ X = numpy.linspace(-L, L, N)
 
 for k in range(3):
     state = wavefunction(basis, coeffs[:,k], X, 0, 0)
-    pyplot.plot(x, state, label="E = {0:.5f}".format(energy[k]))
+    pyplot.plot(X, state, label="E = {0:.5f}".format(energy[k]))
 
 pyplot.grid()
 pyplot.legend()
@@ -824,13 +825,8 @@ Let's plot the electron density along the X axis as well:
 
 \begin{python}
 def density(basis, coeffs, x, y, z):
-    assert len(basis) == len(coeffs)
-
-    f = zero_like(x)
-    for i in range(len(basis)):
-        for j in range(len(basis)):
-            f += coeffs[i] * coeffs[j] * basis[i](x, y, z) * basis[j](x, y, z)
-    return f
+    f = wavefunction(basis, coeffs, x, y, z)
+    return f * f
 \end{python}
 
 \begin{python}
@@ -1384,7 +1380,7 @@ Welcome to the miraculous and frightening world of representation theory! This i
 \item The two-dimensional \textit{standard} representation, with coefficients that sum to zero --- the \(k=1\) and \(k=2\) states.
 \end{itemize}
 
-So, representation theory can predict certain properties of chemical species simply by looking at the symmetry groups. In fact, most chemists learn representation theory as part of their curriculum. For a chemical overview on the subject, see \cite{ref:atkins}. For a deep dive in, see \cite{ref:fulton-harris}.
+So, representation theory can predict certain properties of chemical species simply by looking at the symmetry groups. In fact, most chemists study representation theory as part of their curriculum. For a chemical overview on the subject, see \cite{ref:atkins}. For a deep dive in, see \cite{ref:fulton-harris}.
 
 \newpage
 
