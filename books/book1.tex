@@ -1771,9 +1771,9 @@ The nuclear attraction integral corresponding to a nucleus of charge \(Z\) at po
 
 Here, \(r\) is the vector \((x, y, z)\).
 
-This integral doesn't split in such an easy way. We start with the same trick \eqref{eq:hgto-param} of using differentiation to get rid of Hermite polynomials:
+This integral doesn't split in such an easy way. In fact, we won't even get a closed formula for it, but only an algorithm receipt. We start with the same trick \eqref{eq:hgto-param} of using differentiation to get rid of Hermite polynomials:
 
-\begin{equation}
+\begin{equation} \label{eq:hgto-nuc-attr-1.1}
 \begin{gathered}
 \eqref{eq:hgto-nuc-attr-1} = -Z \sigma_1^{n_{1x} + n_{1y} + n_{1z}} \sigma_2^{n_{2x} + n_{2y} + n_{2z}} 
 \frac{d^{n_{1x}}}{dR_{1x}^{n_{1x}}} \frac{d^{n_{1y}}}{dR_{1y}^{n_{1y}}} \frac{d^{n_{1z}}}{dR_{1z}^{n_{1z}}}
@@ -1814,7 +1814,7 @@ Use the Gaussian product theorem \eqref{eq:gaussian-prod} to reduce the number o
 
 Here, \(\Sigma = \left(\frac{\sigma_1^2\sigma_2^2}{\sigma_1^2+\sigma_2^2}\right)^\frac{1}{2}\) as before, and \(A\) is a vector with coordinates
 
-\begin{equation}
+\begin{equation} \label{eq:hgto-nuc-attr-a-def}
 A_i = \left(\frac{R_{1i}}{\sigma_1^2}+\frac{R_{2i}}{\sigma_2^2}\right)\Sigma^2
 \end{equation}
 
@@ -1879,13 +1879,112 @@ so that
 
 Substituting, we obtain
 
-\begin{equation}
+\begin{equation} \label{eq:hgto-nuc-attr-7}
 \begin{gathered}
 \eqref{eq:hgto-nuc-attr-6} = N \sqrt{\pi}^3 \Sigma^2 \int\limits_{-1}^1 \exp\left[ - t^2 \left(\frac{A-R_0}{\Sigma}\right)^2 \right] dt
 \end{gathered}
 \end{equation}
 
-Recall that both \(N\) and \(A\) depend linearly on \(R_1\) and \(R_2\).
+Recall that both \(N\) and \(A\) depend on \(R_1\) and \(R_2\). Moreover, expanding in terms of separate coordinates, we get
+
+\begin{equation} \label{eq:hgto-nuc-attr-8}
+\begin{gathered}
+\eqref{eq:hgto-nuc-attr-7} = \sqrt{\pi}^3 \Sigma^2 \frac{1}{\sqrt\pi} \exp\left[-\frac{(R_1-R_2)^2}{\sigma_1^2 + \sigma_2^2}\right] \int\limits_{-1}^1 \exp\left[ - t^2 \left(\frac{A-R_0}{\Sigma}\right)^2 \right] dt = \\
+= \pi \Sigma^2 \exp\left[-\frac{(R_{1x}-R_{2x})^2}{\sigma_1^2 + \sigma_2^2} -\frac{(R_{1y}-R_{2y})^2}{\sigma_1^2 + \sigma_2^2} -\frac{(R_{1z}-R_{2z})^2}{\sigma_1^2 + \sigma_2^2} \right] \cdot \\
+\cdot \int\limits_{-1}^1 \exp\left[ - t^2 \left(\frac{A_x-R_{0x}}{\Sigma}\right)^2- t^2 \left(\frac{A_y-R_{0y}}{\Sigma}\right)^2- t^2 \left(\frac{A_z-R_{0z}}{\Sigma}\right)^2 \right] dt = \\
+= \pi \Sigma^2 \int\limits_{-1}^1
+\left( \exp\left[-\frac{(R_{1x}-R_{2x})^2}{\sigma_1^2 + \sigma_2^2} \right] \exp\left[ - t^2 \left(\frac{A_x-R_{0x}}{\Sigma}\right)^2 \right] \right)
+\cdot \\ \cdot
+\left( \exp\left[-\frac{(R_{1y}-R_{2y})^2}{\sigma_1^2 + \sigma_2^2} \right] \exp\left[ - t^2 \left(\frac{A_y-R_{0y}}{\Sigma}\right)^2 \right] \right)
+\cdot \\ \cdot
+\left( \exp\left[-\frac{(R_{1z}-R_{2z})^2}{\sigma_1^2 + \sigma_2^2} \right] \exp\left[ - t^2 \left(\frac{A_z-R_{0z}}{\Sigma}\right)^2 \right] \right)
+dt
+\end{gathered}
+\end{equation}
+
+Here, among the six exponentials, only two depend on \(R_{1x}\) and \(R_{2x}\), two on \(R_{1y}\) and \(R_{2y}\), and two on \(R_{1z}\) and \(R_{2z}\), which simplifies differentiating the whole expression. In light of \eqref{eq:hgto-nuc-attr-1.1} and \eqref{eq:hgto-nuc-attr-8}, we need to compute
+
+\begin{equation} \label{eq:hgto-nuc-attr-9}
+\begin{gathered}
+\eqref{eq:hgto-nuc-attr-1.1} = -Z \sigma_1^{n_{1x} + n_{1y} + n_{1z}} \sigma_2^{n_{2x} + n_{2y} + n_{2z}} \pi \Sigma^2 \cdot \\
+\cdot \int\limits_{-1}^1
+\left( \frac{d^{n_{1x}}}{dR_{1x}^{n_{1x}}}\frac{d^{n_{2x}}}{dR_{2x}^{n_{2x}}} \exp\left[-\frac{(R_{1x}-R_{2x})^2}{\sigma_1^2 + \sigma_2^2} \right] \exp\left[ - t^2 \left(\frac{A_x-R_{0x}}{\Sigma}\right)^2 \right] \right)
+\cdot \\ \cdot
+\left( \frac{d^{n_{1y}}}{dR_{1y}^{n_{1y}}}\frac{d^{n_{2y}}}{dR_{2y}^{n_{2y}}} \exp\left[-\frac{(R_{1y}-R_{2y})^2}{\sigma_1^2 + \sigma_2^2} \right] \exp\left[ - t^2 \left(\frac{A_y-R_{0y}}{\Sigma}\right)^2 \right] \right)
+\cdot \\ \cdot
+\left( \frac{d^{n_{1z}}}{dR_{1z}^{n_{1z}}}\frac{d^{n_{2z}}}{dR_{2z}^{n_{2z}}} \exp\left[-\frac{(R_{1z}-R_{2z})^2}{\sigma_1^2 + \sigma_2^2} \right] \exp\left[ - t^2 \left(\frac{A_z-R_{0z}}{\Sigma}\right)^2 \right] \right)
+dt
+\end{gathered}
+\end{equation}
+
+Lets focus on the \(x\) coordinate (as before, the others are completely analogous). We'll have to employ the \href{https://en.wikipedia.org/wiki/General_Leibniz_rule}{generalized Leibniz rule} for two variables and two functions:
+
+\begin{equation}
+\frac{\partial^n}{\partial a^n} \frac{\partial^m}{\partial b^m} (f\cdot g) = \sum_{\substack{i + i' = n \\ j + j' = m}} \binom{n}{i} \cdot \binom{m}{j} \cdot 
+\left[ \frac{\partial^i}{\partial a^i} \frac{\partial^j}{\partial b^j} f \right] \cdot 
+\left[ \frac{\partial^{i'}}{\partial a^{i'}} \frac{\partial^{j'}}{\partial b^{j'}} g \right]
+\end{equation}
+
+Using this, we can treat the derivatives of \(\exp\left[-\frac{(R_{1x}-R_{2x})^2}{\sigma_1^2 + \sigma_2^2} \right]\) and \(\exp\left[ - t^2 \left(\frac{A_x-R_{0x}}{\Sigma}\right)^2 \right]\) separately.
+
+\begin{equation} \label{eq:hgto-nuc-attr-10}
+\begin{gathered}
+\frac{d^{n_{1x}}}{dR_{1x}^{n_{1x}}}\frac{d^{n_{2x}}}{dR_{2x}^{n_{2x}}} \exp\left[-\frac{(R_{1x}-R_{2x})^2}{\sigma_1^2 + \sigma_2^2} \right] \equalby{eq:gaussian-der-hermite-3} \\
+(-1)^{n_{1x}} (\sigma_1^2 + \sigma_2^2)^{-\frac{n_{1x} + n_{2x}}{2}} H_{n_{1x} + n_{2x}}\left(\frac{R_{1x}-R_{2x}}{\sqrt{\sigma_1^2 + \sigma_2^2}}\right) \exp\left[-\frac{(R_{1x}-R_{2x})^2}{\sigma_1^2 + \sigma_2^2} \right]
+\end{gathered}
+\end{equation}
+
+Next, since \(A_x\) depends on \(R_{1x}\) and \(R_{2x}\) linearly, we have
+
+\begin{equation} \label{eq:hgto-nuc-attr-11}
+\begin{gathered}
+\frac{d^{n_{1x}}}{dR_{1x}^{n_{1x}}}\frac{d^{n_{2x}}}{dR_{2x}^{n_{2x}}} \exp\left[ - t^2 \left(\frac{A_x-R_{0x}}{\Sigma}\right)^2 \right] = \\
+= \left(\frac{\partial A_x}{\partial R_{1x}}\right)^{n_{1x}} \left(\frac{\partial A_x}{\partial R_{2x}}\right)^{n_{2x}} \frac{d^{n_{1x} + n_{2x}}}{dA^{n_{1x} + n_{2x}}} \exp\left[ - t^2 \left(\frac{A_x-R_{0x}}{\Sigma}\right)^2 \right] \equalby{eq:hgto-nuc-attr-a-def} \\
+= \left(\frac{\Sigma^{n_{1x} + n_{2x}}}{\sigma_1^{n_{1x}} \sigma_2^{n_{2x}}}\right)^2 \frac{d^{n_{1x} + n_{2x}}}{dA_x^{n_{1x} + n_{2x}}} \exp\left[ - t^2 \left(\frac{A_x-R_{0x}}{\Sigma}\right)^2 \right] = \\
+= \left(\frac{\Sigma^{n_{1x} + n_{2x}}}{\sigma_1^{n_{1x}} \sigma_2^{n_{2x}}}\right)^2 \frac{d^{n_{1x} + n_{2x}}}{dA_x^{n_{1x} + n_{2x}}} \exp\left[ - \left(\frac{A_x-R_{0x}}{\Sigma / t}\right)^2 \right]
+\equalby{eq:gaussian-der-hermite-1} \\
+= \left(\frac{\Sigma^{n_{1x} + n_{2x}}}{\sigma_1^{n_{1x}} \sigma_2^{n_{2x}}}\right)^2 
+\left(-\frac{t}{\Sigma}\right)^{n_{1x} + n_{2x}}
+H_{n_{1x} + n_{2x}}\left(t\frac{A_x-R_{0x}}{\Sigma}\right)
+\exp\left[ - t^2 \left(\frac{A_x-R_{0x}}{\Sigma}\right)^2 \right]
+\end{gathered}
+\end{equation}
+
+Finally, we need to deal with integration with respect to \(t\). Close inspection of \eqref{eq:hgto-nuc-attr-9}, \eqref{eq:hgto-nuc-attr-10}, and \eqref{eq:hgto-nuc-attr-11} reveals that only the derivatives of \(\exp\left[ - t^2 \left(\frac{A_x-R_{0x}}{\Sigma}\right)^2 \right]\) depend on \(t\), which are of the form \(p(t)e^{-at^2}\), where \(p\) is some polynomial and \(a\) is some constant (in our case, \(a = \left[ - t^2 \left(\frac{A-R_0}{\Sigma}\right)^2 \right]\)). Since integration is linear, we can expand \(p(t) = \sum p_k t^k\) and concentrate on integrating \(t^k e^{-at^2}\).
+
+This can be deal with through induction. Call \(I_n(a) = \int\limits_{-1}^1 t^n e^{-at^2} dt\). Note that \(I_n(a) = 0\) when \(n\) is odd, since we are integrating an odd function on a symmetric interval. For even \(n\) we get
+
+\begin{equation} \label{eq:int-exp-tn-recursion}
+\begin{gathered}
+I_0(a) = \int\limits_{-1}^1 e^{-at^2} dt = \sqrt\frac{\pi}{a} \operatorname{erf}{\sqrt a} \\
+I_{n+2}(a) = \int\limits_{-1}^1 t^{n+2} e^{-at^2} dt = \int\limits_{-1}^1 -\frac{t^{n+1}}{2a} (-2ate^{-at^2}) dt = \\
+= \int\limits_{-1}^1 -\frac{t^{n+1}}{2a} de^{-at^2} = \left. -\frac{t^{n+1}}{2a} e^{-at^2} \right|_{-1}^1 - \int\limits_{-1}^1 -e^{-at^2} d\frac{t^{n+1}}{2a} = \\
+= \frac{e^{-a}}{a} + \frac{n+1}{2a} I_n(a)
+\end{gathered}
+\end{equation}
+
+Thus, we obtain a recursive formula for \(I_n(a)\). Here, \(\operatorname{erf}\) is the \href{https://en.wikipedia.org/wiki/Error_function}{error function}. Routines that compute it are usually present in the standard mathematical library of any programming language.
+
+Note that this formula is highly unstable when \(a \approx 0\), and produces infinities and/or NaN's when \(a=0\) (which happens e.g. when using HGTO's centered on the nucleus, i.e. happens a lot). In this situation, one can use Taylor expansion to compute the integral (assuming even \(n\)):
+
+\begin{equation} \label{eq:int-exp-tn-series}
+\begin{gathered}
+I_n(a) = \int\limits_{-1}^1 t^n e^{-at^2} dt = \int\limits_{-1}^1 t^n \left( \sum\limits_{k=0}^\infty (-a)^k \frac{t^{2k}}{k!} \right) dt = \\
+= \sum\limits_{k=0}^\infty \frac{(-a)^k}{k!} \int\limits_{-1}^1 t^{n+2k} dt = \sum\limits_{k=0}^\infty \frac{(-a)^k}{k!} \frac{2}{n+2k}
+\end{gathered}
+\end{equation}
+
+A reasonable solution is to use recursion for \(|a| \geq \varepsilon\) and use series when \(|a| < \varepsilon\), for some threshold \(\varepsilon\). I used an arbitrarily-chosen value of \(\varepsilon = \frac{1}{16}\).
+
+Lets summarize the receipt for computing the nuclear attraction integral:
+
+\begin{itemize}
+\item A constant factor of \(-Z \sigma_1^{n_{1x} + n_{1y} + n_{1z}} \sigma_2^{n_{2x} + n_{2y} + n_{2z}} \pi \Sigma^2 \)
+\item An integral \eqref{eq:hgto-nuc-attr-9} of a product of three terms, corresponding to \(x, y, z\)
+\item Each term is a higher-order derivative of a product two functions
+\item After expanding all the derivatives, we are left with a polynomial in \(t\) times \(e^{-at^2}\) for some constant \(a\)
+\item After expanding the polynomial into coefficients, the integral can be computed using either a recursive formula \eqref{eq:int-exp-tn-recursion} or a series \eqref{eq:int-exp-tn-series}.
+\end{itemize}
 
 \end{appendices}
 
