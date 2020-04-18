@@ -93,13 +93,8 @@ def wavefunction(basis, coeffs, x, y, z):
 
 
 def density(basis, coeffs, x, y, z):
-    assert len(basis) == len(coeffs)
-
-    f = zero_like(x)
-    for i in range(len(basis)):
-        for j in range(len(basis)):
-            f += coeffs[i] * coeffs[j] * basis[i](x, y, z) * basis[j](x, y, z)
-    return f
+    f = wavefunction(basis, coeffs, x, y, z)
+    return f * f
 
 
 params = optimize(numpy.random.uniform(0.5, 5.0, 4))

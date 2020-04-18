@@ -73,13 +73,8 @@ def wavefunction(basis, coeffs, x, y, z):
 
 
 def density(basis, coeffs, x, y, z):
-    assert len(basis) == len(coeffs)
-
-    f = zero_like(x)
-    for i in range(len(basis)):
-        for j in range(len(basis)):
-            f += coeffs[i] * coeffs[j] * basis[i](x, y, z) * basis[j](x, y, z)
-    return f
+    f = wavefunction(basis, coeffs, x, y, z)
+    return f * f
 
 
 def radial_density(basis, coeffs, r):
